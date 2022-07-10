@@ -1,0 +1,11 @@
+- [ ] Endpoints
+  - [ ] chats for a specific user '/chats' 
+    - [ ] GET
+  - [ ] messages for a specific chat - '/chats/{id}/messages'
+    - [ ] GET - get messages from chat
+    - [ ] POST - put message to chat
+  - [ ] registration
+    - [ ] Spring Security? Roles?
+  - [ ] login
+
+- [ ] Hash passwords (BCryptPasswordEncoder)
