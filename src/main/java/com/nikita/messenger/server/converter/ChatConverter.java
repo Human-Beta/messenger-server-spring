@@ -33,19 +33,19 @@ public class ChatConverter extends AbstractConverter implements Converter<Chat, 
         if (chat.getType() == PRIVATE) {
             final User nonCurrentUser = getNonCurrentUser(chat);
 
-            setChatName(chatData, nonCurrentUser);
-            setImageUrl(chatData, nonCurrentUser);
+            setChatName(nonCurrentUser, chatData);
+            setImageUrl(nonCurrentUser, chatData);
         } else if (chat.getType() == GROUP) {
 //            TODO:
 //            chatData.setName(chat.getName());
 //            chatData.setImageUrl(chat.getImageUrl())
         }
-        setLastMessage(chatData, chat);
+        setLastMessage(chat, chatData);
 
         return chatData;
     }
 
-    private void setChatName(final ChatData chatData, final User nonCurrentUser) {
+    private void setChatName(final User nonCurrentUser, final ChatData chatData) {
         chatData.setName(nonCurrentUser.getName());
     }
 
@@ -54,18 +54,18 @@ public class ChatConverter extends AbstractConverter implements Converter<Chat, 
 
         return chat.getUsers().stream()
                 .filter(Objects::nonNull)
-                .filter(user -> user.equals(currentUser))
+                .filter(user -> !user.equals(currentUser))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(format(NO_NON_CURRENT_USER_MESSAGE, chat.getId())));
     }
 
-    private void setLastMessage(final ChatData chatData, final Chat chat) {
+    private void setLastMessage(final Chat chat, final ChatData chatData) {
         messageService.getLastMessageFrom(chat)
                 .map(message -> getConversionService().convert(message, MessageData.class))
                 .ifPresent(chatData::setLastMessage);
     }
 
-    private void setImageUrl(final ChatData chatData, final User user) {
+    private void setImageUrl(final User user, final ChatData chatData) {
         chatData.setImageUrl(user.getAvatarUrl());
     }
 }

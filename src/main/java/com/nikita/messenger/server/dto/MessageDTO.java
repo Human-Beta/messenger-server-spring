@@ -3,24 +3,24 @@ package com.nikita.messenger.server.dto;
 import java.util.Date;
 
 public class MessageDTO {
-    private String id;
-    private String senderId;
+    private long id;
+    private long senderId;
     private String value;
-    private Date time;
+    private Date date;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(final String id) {
+    public void setId(final long id) {
         this.id = id;
     }
 
-    public String getSenderId() {
+    public long getSenderId() {
         return senderId;
     }
 
-    public void setSenderId(final String senderId) {
+    public void setSenderId(final long senderId) {
         this.senderId = senderId;
     }
 
@@ -32,12 +32,12 @@ public class MessageDTO {
         this.value = value;
     }
 
-    public Date getTime() {
-        return time;
+    public Date getDate() {
+        return date;
     }
 
-    public void setTime(final Date time) {
-        this.time = time;
+    public void setDate(final Date date) {
+        this.date = date;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class MessageDTO {
         return "{" +
                 "senderId='" + senderId + '\'' +
                 ", value='" + value + '\'' +
-                ", time=" + time +
+                ", date=" + date +
                 '}';
     }
 }
