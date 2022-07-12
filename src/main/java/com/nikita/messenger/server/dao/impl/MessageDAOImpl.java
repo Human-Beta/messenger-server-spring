@@ -42,19 +42,19 @@ public class MessageDAOImpl implements MessageDAO {
                         createMessage(125, oleg, "еще не родила??", toDate("2022-06-12T12:25:00+03:00"))
                 ),
                 2L, of(
-                        createMessage(4616, kotyah, "Ну че, как оно?", toDate("2022-06-12T08:23:00+03:00")),
-                        createMessage(94736, me, "Та норм", toDate("2022-06-12T11:02:00+03:00")),
-                        createMessage(1429, kotyah, "круто", toDate("2022-06-12T12:24:00+03:00"))
+                        createMessage(4616, kotyah, "Ну че, как оно?", toDate("2022-06-11T08:23:00+03:00")),
+                        createMessage(94736, me, "Та норм", toDate("2022-06-11T11:02:00+03:00")),
+                        createMessage(1429, kotyah, "круто", toDate("2022-06-11T12:24:00+03:00"))
                 ),
                 3L, of(
-                        createMessage(56111, vasya, "Як умру", toDate("2022-06-12T08:23:00+03:00")),
-                        createMessage(472522, me, "То поховайте", toDate("2022-06-12T11:02:00+03:00")),
-                        createMessage(3332, me, "мэнэ у могыли", toDate("2022-06-12T12:24:00+03:00"))
+                        createMessage(56111, vasya, "Як умру", toDate("2022-02-12T08:23:00+03:00")),
+                        createMessage(472522, me, "То поховайте", toDate("2022-02-12T11:02:00+03:00")),
+                        createMessage(3332, me, "мэнэ у могыли", toDate("2022-02-12T12:24:00+03:00"))
                 ),
                 4L, of(
-                        createMessage(1234, petya, "Чувак это рэпчик", toDate("2022-06-12T08:23:00+03:00")),
-                        createMessage(5432, me, "Круто круто", toDate("2022-06-12T11:02:00+03:00")),
-                        createMessage(9951, petya, "действительно круто", toDate("2022-06-12T12:24:00+03:00"))
+                        createMessage(1234, petya, "Чувак это рэпчик", toDate("2021-06-12T08:23:00+03:00")),
+                        createMessage(5432, me, "Круто круто", toDate("2021-06-12T11:02:00+03:00")),
+                        createMessage(9951, petya, "действительно круто", toDate("2021-06-12T12:24:00+03:00"))
                 )
         );
     }

@@ -2,10 +2,9 @@ package com.nikita.messenger.server.dto;
 
 public class ChatDTO {
     private long id;
-
     private String name;
     private String imageUrl;
-    private String lastMessage;
+    private MessageDTO lastMessage;
 
     public long getId() {
         return id;
@@ -31,11 +30,11 @@ public class ChatDTO {
         this.imageUrl = imageUrl;
     }
 
-    public String getLastMessage() {
+    public MessageDTO getLastMessage() {
         return lastMessage;
     }
 
-    public void setLastMessage(final String lastMessage) {
+    public void setLastMessage(final MessageDTO lastMessage) {
         this.lastMessage = lastMessage;
     }
 }
