@@ -7,16 +7,21 @@ import com.nikita.messenger.server.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class MessageServiceImpl implements MessageService {
-
     @Autowired
     private MessageDAO messageDAO;
 
     @Override
     public Optional<Message> getLastMessageFrom(final Chat chat) {
         return messageDAO.getLastMessageFromChat(chat.getId());
+    }
+
+    @Override
+    public List<Message> getMessagesFromChat(final long chatId) {
+        return messageDAO.getMessagesFromChat(chatId);
     }
 }
