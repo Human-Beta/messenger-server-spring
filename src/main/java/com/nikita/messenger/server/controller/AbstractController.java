@@ -2,11 +2,13 @@ package com.nikita.messenger.server.controller;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AbstractController {
+@CrossOrigin(origins = "${allowed.origin}")
+public abstract class AbstractController {
     @Autowired
     private ModelMapper modelMapper;
 
