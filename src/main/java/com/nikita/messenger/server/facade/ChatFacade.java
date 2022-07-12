@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ChatFacade {
 
-    List<ChatData> getChatsFor(UserData user);
+    List<ChatData> getChatsFor(UserData user, final int page, final int size);
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ChatServiceImpl implements ChatService {
@@ -16,7 +17,12 @@ public class ChatServiceImpl implements ChatService {
     private ChatDAO chatDAO;
 
     @Override
-    public List<Chat> getChatsFor(final UserData user) {
-        return chatDAO.getChatsFor(user.getId());
+    public List<Chat> getChatsFor(final UserData user, final int page, final int size) {
+        return chatDAO.getChatsFor(user.getId(), page, size);
+    }
+
+    @Override
+    public Optional<Chat> getChat(final long chatId) {
+        return chatDAO.getChat(chatId);
     }
 }

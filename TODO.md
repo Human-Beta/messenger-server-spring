@@ -1,3 +1,4 @@
+- [ ] Mark facades with @Service instead of @Component?
 - [ ] Endpoints
   - [ ] chats for a specific user '/chats' 
     - [ ] GET

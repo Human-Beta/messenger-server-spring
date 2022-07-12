@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.nikita.messenger.server.enums.ChatType.PRIVATE;
 import static java.util.List.of;
@@ -57,7 +59,19 @@ public class ChatDAOImpl implements ChatDAO {
         return user;
     }
 
-    public List<Chat> getChatsFor(final long id) {
-        return chats;
+    public List<Chat> getChatsFor(final long id, final int page, final int size) {
+        return chats.stream()
+                .skip((long) (page - 1) * size)
+                .limit(size)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Chat> getChat(final long chatId) {
+        if (chats.size() < chatId) {
+            return Optional.empty();
+        }
+
+        return Optional.of(chats.get((int) chatId - 1));
     }
 }

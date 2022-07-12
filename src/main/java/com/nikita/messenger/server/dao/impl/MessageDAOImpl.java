@@ -100,4 +100,9 @@ public class MessageDAOImpl implements MessageDAO {
 
         return lastMessage;
     }
+
+    @Override
+    public List<Message> getMessagesFromChat(final long chatId) {
+        return messagesMap.get(chatId);
+    }
 }
