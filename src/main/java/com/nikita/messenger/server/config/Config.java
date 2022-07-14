@@ -27,10 +27,6 @@ public class Config {
                 .setFieldAccessLevel(PRIVATE)
                 .setDeepCopyEnabled(TRUE);
 
-
-        modelMapper.typeMap(MessageData.class, MessageDTO.class)
-                .addMapping(messageData -> messageData.getSender().getId(), MessageDTO::setSenderId);
-
         return modelMapper;
     }
 }

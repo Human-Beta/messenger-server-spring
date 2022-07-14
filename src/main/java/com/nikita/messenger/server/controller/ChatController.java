@@ -29,6 +29,6 @@ public class ChatController extends AbstractController {
         final UserData user = userFacade.getCurrentUser();
         final List<ChatData> chats = chatFacade.getChatsFor(user, pagination.getPage(), pagination.getSize());
 
-        return convertAllToDto(chats, ChatDTO.class);
+        return mapAll(chats, ChatDTO.class);
     }
 }

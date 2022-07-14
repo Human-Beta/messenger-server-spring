@@ -7,7 +7,6 @@ import com.nikita.messenger.server.model.User;
 import com.nikita.messenger.server.service.MessageService;
 import com.nikita.messenger.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -17,7 +16,7 @@ import static com.nikita.messenger.server.enums.ChatType.PRIVATE;
 import static java.lang.String.format;
 
 @Component
-public class ChatConverter extends AbstractConverter implements Converter<Chat, ChatData> {
+public class ChatConverter extends AbstractConverter<Chat, ChatData> {
     private static final String NO_NON_CURRENT_USER_MESSAGE = "Either there is the current user only, or there are no users, in the chat '%s'";
 
     @Autowired

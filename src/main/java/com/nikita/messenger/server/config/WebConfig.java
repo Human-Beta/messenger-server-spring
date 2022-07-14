@@ -2,6 +2,7 @@ package com.nikita.messenger.server.config;
 
 import com.nikita.messenger.server.converter.ChatConverter;
 import com.nikita.messenger.server.converter.MessageConverter;
+import com.nikita.messenger.server.converter.MessageReverseConverter;
 import com.nikita.messenger.server.converter.UserConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -16,12 +17,15 @@ public class WebConfig implements WebMvcConfigurer {
     private MessageConverter messageConverter;
     @Autowired
     private UserConverter userConverter;
+    @Autowired
+    private MessageReverseConverter messageReverseConverter;
 
     @Override
     public void addFormatters(final FormatterRegistry registry) {
         registry.addConverter(chatConverter);
         registry.addConverter(messageConverter);
         registry.addConverter(userConverter);
+        registry.addConverter(messageReverseConverter);
     }
 
 }

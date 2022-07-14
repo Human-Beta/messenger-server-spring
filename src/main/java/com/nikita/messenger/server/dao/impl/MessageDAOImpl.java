@@ -8,17 +8,23 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
-import static java.util.List.of;
 import static java.util.Optional.empty;
 
 @Component
 public class MessageDAOImpl implements MessageDAO {
+    //    TODO: remove
+    private long id = 0;
+
 //    TODO: remove
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ENGLISH);
 
@@ -35,27 +41,27 @@ public class MessageDAOImpl implements MessageDAO {
         final User petya = createUser(4, "pushka_petrushka", "4", "Петя", "#");
 
         messagesMap = Map.of(
-                1L, of(
-                        createMessage(123, oleg, "Привет!", toDate("2022-06-12T08:23:00+03:00")),
-                        createMessage(312, me, "Хэлооооу", toDate("2022-06-12T11:02:00+03:00")),
-                        createMessage(124, oleg, "Как дела?", toDate("2022-06-12T12:24:00+03:00")),
-                        createMessage(125, oleg, "еще не родила??", toDate("2022-06-12T12:25:00+03:00"))
-                ),
-                2L, of(
-                        createMessage(4616, kotyah, "Ну че, как оно?", toDate("2022-06-11T08:23:00+03:00")),
-                        createMessage(94736, me, "Та норм", toDate("2022-06-11T11:02:00+03:00")),
-                        createMessage(1429, kotyah, "круто", toDate("2022-06-11T12:24:00+03:00"))
-                ),
-                3L, of(
-                        createMessage(56111, vasya, "Як умру", toDate("2022-02-12T08:23:00+03:00")),
-                        createMessage(472522, me, "То поховайте", toDate("2022-02-12T11:02:00+03:00")),
-                        createMessage(3332, me, "мэнэ у могыли", toDate("2022-02-12T12:24:00+03:00"))
-                ),
-                4L, of(
-                        createMessage(1234, petya, "Чувак это рэпчик", toDate("2021-06-12T08:23:00+03:00")),
-                        createMessage(5432, me, "Круто круто", toDate("2021-06-12T11:02:00+03:00")),
-                        createMessage(9951, petya, "действительно круто", toDate("2021-06-12T12:24:00+03:00"))
-                )
+                1L, new ArrayList<>(Arrays.asList(
+                        createMessage(++id, oleg.getId(), 1L, "Привет!", toDate("2022-06-12T08:23:00+03:00")),
+                        createMessage(++id, me.getId(), 1L, "Хэлооооу", toDate("2022-06-12T11:02:00+03:00")),
+                        createMessage(++id, oleg.getId(), 1L, "Как дела?", toDate("2022-06-12T12:24:00+03:00")),
+                        createMessage(++id, oleg.getId(), 1L, "еще не родила??", toDate("2022-07-14T12:25:00+03:00"))
+                )),
+                2L, new ArrayList<>(Arrays.asList(
+                        createMessage(++id, kotyah.getId(), 2L, "Ну че, как оно?", toDate("2022-06-11T08:23:00+03:00")),
+                        createMessage(++id, me.getId(), 2L, "Та норм", toDate("2022-06-11T11:02:00+03:00")),
+                        createMessage(++id, kotyah.getId(), 2L, "круто", toDate("2022-06-11T12:24:00+03:00"))
+                )),
+                3L, new ArrayList<>(Arrays.asList(
+                        createMessage(++id, vasya.getId(), 3L, "Як умру", toDate("2022-02-12T08:23:00+03:00")),
+                        createMessage(++id, me.getId(), 3L, "То поховайте", toDate("2022-02-12T11:02:00+03:00")),
+                        createMessage(++id, me.getId(), 3L, "мэнэ у могыли", toDate("2022-02-12T12:24:00+03:00"))
+                )),
+                4L, new ArrayList<>(Arrays.asList(
+                        createMessage(++id, petya.getId(), 4L, "Чувак это рэпчик", toDate("2021-06-12T08:23:00+03:00")),
+                        createMessage(++id, me.getId(), 4L, "Круто круто", toDate("2021-06-12T11:02:00+03:00")),
+                        createMessage(++id, petya.getId(), 4L, "действительно круто", toDate("2021-06-12T12:24:00+03:00"))
+                ))
         );
     }
 
@@ -72,12 +78,13 @@ public class MessageDAOImpl implements MessageDAO {
         return user;
     }
 
-    private Message createMessage(final long id, final User sender, final String value, final Date date) {
+    private Message createMessage(final long id, final long senderId, final long chatId, final String value, final Date date) {
         final Message message = new Message();
 
         message.setId(id);
         message.setValue(value);
-        message.setSender(sender);
+        message.setSenderId(senderId);
+        message.setChatId(chatId);
         message.setDate(date);
 
         return message;
@@ -85,6 +92,14 @@ public class MessageDAOImpl implements MessageDAO {
 
     private Date toDate(final String dateInString) throws ParseException {
         return formatter.parse(dateInString);
+    }
+
+    @Override
+    public Optional<Message> getMessage(final long messageId) {
+        return messagesMap.values().stream()
+                .flatMap(Collection::stream)
+                .filter(message -> Objects.equals(message.getId(), messageId))
+                .findFirst();
     }
 
     @Override
@@ -104,5 +119,15 @@ public class MessageDAOImpl implements MessageDAO {
     @Override
     public List<Message> getMessagesFromChat(final long chatId) {
         return messagesMap.get(chatId);
+    }
+
+    @Override
+    public long putMessageToChat(final Message message) {
+        messagesMap.get(message.getChatId())
+                .add(message);
+
+        message.setId(++id);
+
+        return id;
     }
 }

@@ -2,19 +2,11 @@ package com.nikita.messenger.server.dto;
 
 import java.util.Date;
 
-public class MessageDTO {
-    private long id;
+public class MessageDTO extends AbstractDTO {
     private long senderId;
+    private long chatId;
     private String value;
     private Date date;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
 
     public long getSenderId() {
         return senderId;
@@ -22,6 +14,14 @@ public class MessageDTO {
 
     public void setSenderId(final long senderId) {
         this.senderId = senderId;
+    }
+
+    public long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(final long chatId) {
+        this.chatId = chatId;
     }
 
     public String getValue() {

@@ -1,18 +1,9 @@
 package com.nikita.messenger.server.dto;
 
-public class ChatDTO {
-    private long id;
+public class ChatDTO extends AbstractDTO {
     private String name;
     private String imageUrl;
     private MessageDTO lastMessage;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

@@ -4,9 +4,8 @@ import java.util.Date;
 
 public class Message {
     private long id;
-    private User sender;
-//    TODO: lazy load?
-    private Chat chat;
+    private long senderId;
+    private long chatId;
     private String value;
     private Date date;
 
@@ -18,20 +17,20 @@ public class Message {
         this.id = id;
     }
 
-    public User getSender() {
-        return sender;
+    public long getSenderId() {
+        return senderId;
     }
 
-    public void setSender(final User sender) {
-        this.sender = sender;
+    public void setSenderId(final long senderId) {
+        this.senderId = senderId;
     }
 
-    public Chat getChat() {
-        return chat;
+    public long getChatId() {
+        return chatId;
     }
 
-    public void setChat(final Chat chat) {
-        this.chat = chat;
+    public void setChatId(final long chatId) {
+        this.chatId = chatId;
     }
 
     public String getValue() {

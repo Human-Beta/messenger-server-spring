@@ -1,12 +1,15 @@
 - [ ] Mark facades with @Service instead of @Component?
 - [ ] Endpoints
-  - [ ] chats for a specific user '/chats' 
-    - [ ] GET
-  - [ ] messages for a specific chat - '/chats/{id}/messages'
-    - [ ] GET - get messages from chat
-    - [ ] POST - put message to chat
-  - [ ] registration
+  - [x] chats for a specific user '/chats' 
+    - [x] GET
+  - [x] messages for a specific chatId - '/chats/{id}/messages'
+    - [x] GET - get messages from chatId
+    - [x] POST - put message to chatId
+  - [ ] registration '/register'
     - [ ] Spring Security? Roles?
-  - [ ] login
+  - [ ] login '/login'
 
+- [ ] Unit tests
+- [ ] Do not forget about transactions!!
+- [ ] Log
 - [ ] Hash passwords (BCryptPasswordEncoder)

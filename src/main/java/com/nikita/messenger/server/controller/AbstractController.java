@@ -12,13 +12,13 @@ public abstract class AbstractController {
     @Autowired
     private ModelMapper modelMapper;
 
-    protected <T> List<T> convertAllToDto(final List<?> sources, final Class<T> clazz) {
+    protected <T> List<T> mapAll(final List<?> sources, final Class<T> clazz) {
         return sources.stream()
-                .map(source -> convertToDto(source, clazz))
+                .map(source -> map(source, clazz))
                 .collect(Collectors.toList());
     }
 
-    protected <T> T convertToDto(final Object source, final Class<T> clazz) {
+    protected <T> T map(final Object source, final Class<T> clazz) {
         return modelMapper.map(source, clazz);
     }
 }

@@ -4,7 +4,8 @@ import java.util.Date;
 
 public class MessageData {
     private long id;
-    private UserData sender;
+    private long senderId;
+    private long chatId;
     private String value;
     private Date date;
 
@@ -16,12 +17,20 @@ public class MessageData {
         this.id = id;
     }
 
-    public UserData getSender() {
-        return sender;
+    public long getSenderId() {
+        return senderId;
     }
 
-    public void setSender(final UserData sender) {
-        this.sender = sender;
+    public void setSenderId(final long senderId) {
+        this.senderId = senderId;
+    }
+
+    public long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(final long chatId) {
+        this.chatId = chatId;
     }
 
     public String getValue() {

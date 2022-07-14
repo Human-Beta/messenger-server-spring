@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface MessageFacade {
     List<MessageData> getMessagesFromChat(long chatId);
+
+    MessageData putMessageToChat(MessageData messageData);
 }
