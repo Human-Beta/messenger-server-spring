@@ -20,10 +20,10 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
 
     @Override
 //    TODO: place for transactional
-    public List<MessageData> getMessagesFromChat(final long chatId) {
+    public List<MessageData> getMessagesFromChat(final long chatId, final int page, final int size) {
         checkIfChatExists(chatId);
 
-        final List<Message> messages = messageService.getMessagesFromChat(chatId);
+        final List<Message> messages = messageService.getMessagesFromChat(chatId, page, size);
 
         return convertAll(messages, MessageData.class);
     }

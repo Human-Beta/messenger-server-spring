@@ -10,7 +10,7 @@ public interface MessageDAO {
 
     Optional<Message> getLastMessageFromChat(long chatId);
 
-    List<Message> getMessagesFromChat(long chatId);
+    List<Message> getMessagesFromChat(long chatId, final int page, final int size);
 
     long putMessageToChat(Message message);
 }

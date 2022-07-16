@@ -23,17 +23,16 @@ public class MessageController extends AbstractController {
     @Autowired
     private MessageFacade messageFacade;
 
-
     @GetMapping
     public List<MessageDTO> getMessagesForChat(@RequestParam final long chatId, @Valid final PaginationDTO pagination) {
-//        TODO: add pagination to the call
-        final List<MessageData> messages = messageFacade.getMessagesFromChat(chatId);
+        final List<MessageData> messages = messageFacade.getMessagesFromChat(chatId, pagination.getPage(), pagination.getSize());
 
         return mapAll(messages, MessageDTO.class);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+//    TODO: validation for message?
     public MessageDTO sendMessage(@RequestBody final MessageDTO message) {
         final MessageData messageData = map(message, MessageData.class);
 

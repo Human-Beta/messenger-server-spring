@@ -11,7 +11,7 @@ public interface MessageService {
 
     Optional<Message> getLastMessageFrom(Chat chat);
 
-    List<Message> getMessagesFromChat(long chatId);
+    List<Message> getMessagesFromChat(long chatId, final int page, final int size);
 
     long putMessageToChat(Message message);
 }

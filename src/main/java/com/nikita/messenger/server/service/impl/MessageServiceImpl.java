@@ -30,8 +30,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> getMessagesFromChat(final long chatId) {
-        return messageDAO.getMessagesFromChat(chatId);
+    public List<Message> getMessagesFromChat(final long chatId, final int page, final int size) {
+        return messageDAO.getMessagesFromChat(chatId, page, size);
     }
 
     @Override

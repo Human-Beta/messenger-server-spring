@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.empty;
 
@@ -117,8 +118,11 @@ public class MessageDAOImpl implements MessageDAO {
     }
 
     @Override
-    public List<Message> getMessagesFromChat(final long chatId) {
-        return messagesMap.get(chatId);
+    public List<Message> getMessagesFromChat(final long chatId, final int page, final int size) {
+        return messagesMap.get(chatId).stream()
+                .skip((long) (page - 1) * size)
+                .limit(size)
+                .collect(Collectors.toList());
     }
 
     @Override
