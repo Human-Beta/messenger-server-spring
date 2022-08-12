@@ -1,13 +1,9 @@
 package com.nikita.messenger.server.dto;
 
-import java.util.Date;
-
-public class MessageDTO extends AbstractDTO {
+public class MessageRequestDTO extends AbstractDTO {
     private long localId;
-    private long senderId;
     private long chatId;
     private String value;
-    private Date date;
 
     public long getLocalId() {
         return localId;
@@ -15,14 +11,6 @@ public class MessageDTO extends AbstractDTO {
 
     public void setLocalId(final long localId) {
         this.localId = localId;
-    }
-
-    public long getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(final long senderId) {
-        this.senderId = senderId;
     }
 
     public long getChatId() {
@@ -41,20 +29,12 @@ public class MessageDTO extends AbstractDTO {
         this.value = value;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(final Date date) {
-        this.date = date;
-    }
-
     @Override
     public String toString() {
-        return "{" +
-                "senderId='" + senderId + '\'' +
+        return "MessageRequestDTO{" +
+                "localId=" + localId +
+                ", chatId=" + chatId +
                 ", value='" + value + '\'' +
-                ", date=" + date +
                 '}';
     }
 }

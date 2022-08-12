@@ -12,6 +12,7 @@ public class MessageConverter extends AbstractConverter<Message, MessageData> {
         final MessageData messageData = new MessageData();
 
         messageData.setId(message.getId());
+        messageData.setLocalId(message.getLocalId());
         messageData.setDate(message.getDate());
         messageData.setSenderId(message.getSenderId());
         messageData.setChatId(message.getChatId());

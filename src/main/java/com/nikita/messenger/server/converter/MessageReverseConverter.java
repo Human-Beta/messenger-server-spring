@@ -11,6 +11,7 @@ public class MessageReverseConverter extends AbstractConverter<MessageData, Mess
         final Message message = new Message();
 
         message.setId(messageData.getId());
+        message.setLocalId(messageData.getLocalId());
         message.setValue(messageData.getValue());
         message.setChatId(messageData.getChatId());
         message.setSenderId(messageData.getSenderId());

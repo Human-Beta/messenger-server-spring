@@ -1,6 +1,7 @@
 package com.nikita.messenger.server.facade.impl;
 
 import com.nikita.messenger.server.data.MessageData;
+import com.nikita.messenger.server.data.MessageRequestData;
 import com.nikita.messenger.server.exception.ChatNotFoundException;
 import com.nikita.messenger.server.facade.MessageFacade;
 import com.nikita.messenger.server.model.Message;
@@ -36,10 +37,11 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
 
     @Override
 //    TODO: place for transactional
-    public MessageData putMessageToChat(final MessageData messageData) {
-        checkIfChatExists(messageData.getChatId());
+    public MessageData putMessageToChat(final MessageRequestData messageRequestData) {
+//        TODO: and check if current user able to send message into it
+        checkIfChatExists(messageRequestData.getChatId());
 
-        final Message message = convert(messageData, Message.class);
+        final Message message = convert(messageRequestData, Message.class);
 
         final long messageId = messageService.putMessageToChat(message);
         final Message savedMessage = messageService.getMessage(messageId)

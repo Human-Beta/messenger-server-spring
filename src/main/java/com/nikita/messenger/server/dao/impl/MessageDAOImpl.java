@@ -46,10 +46,10 @@ public class MessageDAOImpl implements MessageDAO {
                         createMessage(++id, oleg.getId(), 1L, "Привет!", toDate("2022-06-12T08:23:00+03:00")),
                         createMessage(++id, me.getId(), 1L, "Хэлооооу", toDate("2022-06-12T11:02:00+03:00")),
                         createMessage(++id, oleg.getId(), 1L, "Как дела?", toDate("2022-06-12T12:24:00+03:00")),
-                        createMessage(++id, oleg.getId(), 1L, "еще не родила??", toDate("2022-07-14T12:25:00+03:00"))
+                        createMessage(++id, oleg.getId(), 1L, "еще не родила??", toDate("2022-07-14T20:25:00+03:00"))
                 )),
                 2L, new ArrayList<>(Arrays.asList(
-                        createMessage(++id, kotyah.getId(), 2L, "Ну че, как оно?", toDate("2022-06-11T08:23:00+03:00")),
+                        createMessage(++id, kotyah.getId(), 2L, "Очень у меня к тебе важный вопрос! Давно хотел спросить, но чето стеснялся." + System.lineSeparator() + " И вот все-таки решился и спрошу щас. Так вот, ну че, как оно? ", toDate("2022-06-11T08:23:00+03:00")),
                         createMessage(++id, me.getId(), 2L, "Та норм", toDate("2022-06-11T11:02:00+03:00")),
                         createMessage(++id, kotyah.getId(), 2L, "круто", toDate("2022-06-11T12:24:00+03:00"))
                 )),
@@ -120,6 +120,8 @@ public class MessageDAOImpl implements MessageDAO {
     @Override
     public List<Message> getMessagesFromChat(final long chatId, final int page, final int size) {
         return messagesMap.get(chatId).stream()
+//                TODO: sort by date descending
+                .sorted(((chat1, chat2) -> chat2.getDate().compareTo(chat1.getDate())))
                 .skip((long) (page - 1) * size)
                 .limit(size)
                 .collect(Collectors.toList());

@@ -36,6 +36,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public long putMessageToChat(final Message message) {
+//        TODO: validate message
         message.setSenderId(userService.getCurrentUser().getId());
         message.setDate(new Date());
 

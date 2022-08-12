@@ -1,22 +1,9 @@
 package com.nikita.messenger.server.data;
 
-import java.util.Date;
-
-public class MessageData {
-    private long id;
+public class MessageRequestData {
     private long localId;
-    private long senderId;
     private long chatId;
     private String value;
-    private Date date;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
 
     public long getLocalId() {
         return localId;
@@ -24,14 +11,6 @@ public class MessageData {
 
     public void setLocalId(final long localId) {
         this.localId = localId;
-    }
-
-    public long getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(final long senderId) {
-        this.senderId = senderId;
     }
 
     public long getChatId() {
@@ -48,13 +27,5 @@ public class MessageData {
 
     public void setValue(final String value) {
         this.value = value;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(final Date date) {
-        this.date = date;
     }
 }

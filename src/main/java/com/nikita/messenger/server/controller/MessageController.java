@@ -1,7 +1,9 @@
 package com.nikita.messenger.server.controller;
 
 import com.nikita.messenger.server.data.MessageData;
+import com.nikita.messenger.server.data.MessageRequestData;
 import com.nikita.messenger.server.dto.MessageDTO;
+import com.nikita.messenger.server.dto.MessageRequestDTO;
 import com.nikita.messenger.server.dto.PaginationDTO;
 import com.nikita.messenger.server.facade.MessageFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +35,13 @@ public class MessageController extends AbstractController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
 //    TODO: validation for message?
-    public MessageDTO sendMessage(@RequestBody final MessageDTO message) {
-        final MessageData messageData = map(message, MessageData.class);
+//          chat exists?
+//          user exists? user authorized?
+//    TODO: what should i do with date? Set it on either server or client side?
+    public MessageDTO sendMessage(@RequestBody final MessageRequestDTO messageRequest) {
+        final MessageRequestData messageRequestData = map(messageRequest, MessageRequestData.class);
 
-        final MessageData savedMessage = messageFacade.putMessageToChat(messageData);
+        final MessageData savedMessage = messageFacade.putMessageToChat(messageRequestData);
 
         return map(savedMessage, MessageDTO.class);
     }
