@@ -3,7 +3,7 @@ package com.nikita.messenger.server.dto;
 public class ChatDTO extends AbstractDTO {
     private String name;
     private String imageUrl;
-    private MessageDTO lastMessage;
+    private MessageDTO initialLastMessage;
 
     public String getName() {
         return name;
@@ -21,11 +21,11 @@ public class ChatDTO extends AbstractDTO {
         this.imageUrl = imageUrl;
     }
 
-    public MessageDTO getLastMessage() {
-        return lastMessage;
+    public MessageDTO getInitialLastMessage() {
+        return initialLastMessage;
     }
 
-    public void setLastMessage(final MessageDTO lastMessage) {
-        this.lastMessage = lastMessage;
+    public void setInitialLastMessage(final MessageDTO initialLastMessage) {
+        this.initialLastMessage = initialLastMessage;
     }
 }

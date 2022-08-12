@@ -27,6 +27,9 @@ public class Config {
                 .setFieldAccessLevel(PRIVATE)
                 .setDeepCopyEnabled(TRUE);
 
+        modelMapper.typeMap(ChatData.class, ChatDTO.class)
+                .addMapping(ChatData::getLastMessage, ChatDTO::setInitialLastMessage);
+
         return modelMapper;
     }
 }
