@@ -3,6 +3,7 @@ package com.nikita.messenger.server.data;
 public class ChatData {
     private long id;
     private String name;
+    private String chatName;
     private String imageUrl;
     private MessageData lastMessage;
 
@@ -20,6 +21,14 @@ public class ChatData {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getChatName() {
+        return chatName;
+    }
+
+    public void setChatName(final String chatName) {
+        this.chatName = chatName;
     }
 
     public String getImageUrl() {

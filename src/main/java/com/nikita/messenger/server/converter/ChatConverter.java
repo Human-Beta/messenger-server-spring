@@ -17,7 +17,7 @@ import static java.lang.String.format;
 
 @Component
 public class ChatConverter extends AbstractConverter<Chat, ChatData> {
-    private static final String NO_NON_CURRENT_USER_MESSAGE = "Either there is the current user only, or there are no users, in the chat '%s'";
+    private static final String NO_PARTNER_USER_MESSAGE = "Either there is the current user only, or there are no users, in the chat '%s'";
 
     @Autowired
     private UserService userService;
@@ -30,10 +30,11 @@ public class ChatConverter extends AbstractConverter<Chat, ChatData> {
 
         chatData.setId(chat.getId());
         if (chat.getType() == PRIVATE) {
-            final User nonCurrentUser = getNonCurrentUser(chat);
+            final User chatPartnerUser = getChatPartnerUser(chat);
 
-            setChatName(nonCurrentUser, chatData);
-            setImageUrl(nonCurrentUser, chatData);
+            setName(chatPartnerUser, chatData);
+            setChatName(chatPartnerUser, chatData);
+            setImageUrl(chatPartnerUser, chatData);
         } else if (chat.getType() == GROUP) {
 //            TODO:
 //            chatData.setName(chat.getName());
@@ -44,18 +45,22 @@ public class ChatConverter extends AbstractConverter<Chat, ChatData> {
         return chatData;
     }
 
-    private void setChatName(final User nonCurrentUser, final ChatData chatData) {
-        chatData.setName(nonCurrentUser.getName());
+    private void setName(final User user, final ChatData chatData) {
+        chatData.setName(user.getName());
     }
 
-    private User getNonCurrentUser(final Chat chat) {
+    private void setChatName(final User user, final ChatData chatData) {
+        chatData.setChatName(user.getNickName());
+    }
+
+    private User getChatPartnerUser(final Chat chat) {
         final User currentUser = userService.getCurrentUser();
 
         return chat.getUsers().stream()
                 .filter(Objects::nonNull)
                 .filter(user -> !user.equals(currentUser))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException(format(NO_NON_CURRENT_USER_MESSAGE, chat.getId())));
+                .orElseThrow(() -> new IllegalStateException(format(NO_PARTNER_USER_MESSAGE, chat.getId())));
     }
 
     private void setLastMessage(final Chat chat, final ChatData chatData) {
