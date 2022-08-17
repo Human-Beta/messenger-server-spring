@@ -15,6 +15,11 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.0.RELEASE'
+//	TODO: use it?
+//	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+//	implementation 'org.springframework.security:spring-security-oauth2-authorization-server:0.3.1'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'com.corundumstudio.socketio:netty-socketio:1.7.17'
 	implementation 'org.modelmapper:modelmapper:3.1.0'
