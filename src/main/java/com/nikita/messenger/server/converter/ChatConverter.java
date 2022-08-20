@@ -50,7 +50,7 @@ public class ChatConverter extends AbstractConverter<Chat, ChatData> {
     }
 
     private void setChatName(final User user, final ChatData chatData) {
-        chatData.setChatName(user.getNickName());
+        chatData.setChatName(user.getNickname());
     }
 
     private User getChatPartnerUser(final Chat chat) {

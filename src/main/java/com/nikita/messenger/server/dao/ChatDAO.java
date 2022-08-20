@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChatDAO {
-    List<Chat> getChatsFor(long id, final int page, final int size);
+    List<Chat> getChatsFor(long userId, final int page, final int size);
 
     Optional<Chat> getChat(long chatId);
 }

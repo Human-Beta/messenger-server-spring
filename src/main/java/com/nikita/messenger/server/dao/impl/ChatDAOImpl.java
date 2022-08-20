@@ -21,7 +21,7 @@ public class ChatDAOImpl implements ChatDAO {
 
     @PostConstruct
     private void init() {
-        final User me = createUser(0, "nikita_pobrito", "0", "Никита", "#");
+        final User me = createUser(0, "nikita", "0", "Никита", "#");
 
         final User oleg = createUser(1, "oleg_ubiyca", "1", "Олег", "#");
         final User kotyah = createUser(2, "kitty", "2", "Котях", "#");
@@ -46,12 +46,12 @@ public class ChatDAOImpl implements ChatDAO {
         return chat;
     }
 
-    private User createUser(final long id, final String nickName, final String password, final String name,
+    private User createUser(final long id, final String nickname, final String password, final String name,
                             final String avatarUrl) {
         final User user = new User();
 
         user.setId(id);
-        user.setNickName(nickName);
+        user.setNickname(nickname);
         user.setPassword(password);
         user.setName(name);
         user.setAvatarUrl(avatarUrl);
@@ -59,7 +59,8 @@ public class ChatDAOImpl implements ChatDAO {
         return user;
     }
 
-    public List<Chat> getChatsFor(final long id, final int page, final int size) {
+    @Override
+    public List<Chat> getChatsFor(final long userId, final int page, final int size) {
         return chats.stream()
                 .skip((long) (page - 1) * size)
                 .limit(size)

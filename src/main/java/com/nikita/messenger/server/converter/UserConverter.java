@@ -13,7 +13,7 @@ public class UserConverter implements Converter<User, UserData> {
         final UserData userData = new UserData();
 
         userData.setId(user.getId());
-        userData.setNickName(user.getNickName());
+        userData.setNickname(user.getNickname());
         userData.setName(user.getName());
         userData.setAvatarUrl(user.getAvatarUrl());
 

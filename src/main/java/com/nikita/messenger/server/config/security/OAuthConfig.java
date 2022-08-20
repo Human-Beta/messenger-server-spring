@@ -75,8 +75,9 @@ public class OAuthConfig implements AuthorizationServerConfigurer  {
     public InMemoryUserDetailsManager userDetailsService() {
         final UserDetails user = User.builder()
                 .passwordEncoder(passwordEncoder()::encode)
-                .username("test_user")
-                .password("test_password")
+                .username("nikita")
+                .password("112233")
+//                TODO: add role for the User model
                 .roles("USER")
                 .build();
         return new InMemoryUserDetailsManager(user);

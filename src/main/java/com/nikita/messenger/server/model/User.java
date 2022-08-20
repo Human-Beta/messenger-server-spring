@@ -3,7 +3,7 @@ package com.nikita.messenger.server.model;
 public class User {
 
     private long id;
-    private String nickName;
+    private String nickname;
     private String password;
     private String name;
     private String avatarUrl;
@@ -16,12 +16,12 @@ public class User {
         this.id = id;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(final String nickName) {
-        this.nickName = nickName;
+    public void setNickname(final String nickname) {
+        this.nickname = nickname;
     }
 
     public String getPassword() {

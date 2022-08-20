@@ -34,7 +34,7 @@ public class MessageDAOImpl implements MessageDAO {
 
     @PostConstruct
     private void init() throws ParseException {
-        final User me = createUser(0, "nikita_pobrito", "0", "Никита", "#");
+        final User me = createUser(0, "nikita", "0", "Никита", "#");
 
         final User oleg = createUser(1, "oleg_ubiyca", "1", "Олег", "#");
         final User kotyah = createUser(2, "kitty", "2", "Котях", "#");
@@ -71,7 +71,7 @@ public class MessageDAOImpl implements MessageDAO {
         final User user = new User();
 
         user.setId(id);
-        user.setNickName(nickName);
+        user.setNickname(nickName);
         user.setPassword(password);
         user.setName(name);
         user.setAvatarUrl(avatarUrl);
