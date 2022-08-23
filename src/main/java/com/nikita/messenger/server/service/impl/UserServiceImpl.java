@@ -1,7 +1,7 @@
 package com.nikita.messenger.server.service.impl;
 
-import com.nikita.messenger.server.dao.UserDAO;
 import com.nikita.messenger.server.model.User;
+import com.nikita.messenger.server.repository.UserRepository;
 import com.nikita.messenger.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    private UserDAO userDAO;
+    private UserRepository userRepository;
 
     @Override
     public User getCurrentUser() {
@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByNickname(final String nickname) {
-        return userDAO.getUserByNickname(nickname)
+        return userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new UsernameNotFoundException("There is no user with nickname: " + nickname));
     }
 

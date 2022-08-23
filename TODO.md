@@ -6,8 +6,10 @@
     - [x] GET - get messages from chatId
     - [x] POST - put message to chatId
   - [ ] registration '/register'
-    - [ ] Spring Security? Roles?
-  - [ ] login '/login'
+  - [x] login '/login'
+- [x] Spring Security
+- [ ] Save auth clients in DB
+- [ ] Save auth tokens in DB
 
 - [ ] Unit tests
 - [ ] Do not forget about transactions!!

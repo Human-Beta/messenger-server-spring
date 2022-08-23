@@ -22,6 +22,7 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
     @Override
 //    TODO: place for transactional
     public List<MessageData> getMessagesFromChat(final long chatId, final int page, final int size) {
+//        TODO: and check if current user allowed to get messages from the chat
         checkIfChatExists(chatId);
 
         final List<Message> messages = messageService.getMessagesFromChat(chatId, page, size);
@@ -30,7 +31,7 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
     }
 
     private void checkIfChatExists(final long chatId) {
-        if (chatService.getChat(chatId).isEmpty()) {
+        if (!chatService.exists(chatId)) {
             throw new ChatNotFoundException(chatId);
         }
     }
@@ -38,14 +39,15 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
     @Override
 //    TODO: place for transactional
     public MessageData putMessageToChat(final MessageRequestData messageRequestData) {
-//        TODO: and check if current user able to send message into it
+//        TODO: and check if current user allowed to send message into the chat
         checkIfChatExists(messageRequestData.getChatId());
 
         final Message message = convert(messageRequestData, Message.class);
 
-        final long messageId = messageService.putMessageToChat(message);
-        final Message savedMessage = messageService.getMessage(messageId)
-                .orElseThrow(() -> new IllegalStateException("There is no message with id " + messageId));
+        final Message savedMessage = messageService.saveMessageToChat(message);
+//        TODO: remove!
+//        final Message savedMessage = messageService.getMessage(messageId)
+//                .orElseThrow(() -> new IllegalStateException("There is no message with id " + messageId));
 
         return convert(savedMessage, MessageData.class);
     }

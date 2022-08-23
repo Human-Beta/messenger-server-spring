@@ -5,15 +5,17 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @EnableWebSecurity
 public class ServerSecurityConfig {
-
     @Value("${allowed.origin}")
     private String allowedOrigin;
+
     @Bean
     public FilterRegistrationBean<CorsFilter>  customCorsFilter() {
         final CorsConfiguration config = new CorsConfiguration();
@@ -31,19 +33,8 @@ public class ServerSecurityConfig {
         return bean;
     }
 
-//    TODO: do i need it?
-//    @Bean
-//    public SecurityFilterChain defaultSecurityFilterChain(final HttpSecurity http) throws Exception {
-//        http
-//                .sessionManagement().sessionCreationPolicy(STATELESS)
-//                .and()
-//                .csrf().disable()
-//                .cors().disable()
-//                .authorizeRequests()
-//                .anyRequest()
-//                .permitAll();
-////                .authenticated();
-//
-//        return http.build();
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
 }

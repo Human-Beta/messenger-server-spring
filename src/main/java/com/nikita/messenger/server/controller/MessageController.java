@@ -36,9 +36,9 @@ public class MessageController extends AbstractController {
     @ResponseStatus(HttpStatus.CREATED)
 //    TODO: validation for message?
 //          chat exists?
-//          user exists? user authorized?
-//    TODO: what should i do with date? Set it on either server or client side?
     public MessageDTO sendMessage(@RequestBody final MessageRequestDTO messageRequest) {
+//        TODO: remove. It is a draft fix for 'Data truncation: Out of range value for column 'local_id' at row 1' error
+        messageRequest.setLocalId(0);
         final MessageRequestData messageRequestData = map(messageRequest, MessageRequestData.class);
 
         final MessageData savedMessage = messageFacade.putMessageToChat(messageRequestData);

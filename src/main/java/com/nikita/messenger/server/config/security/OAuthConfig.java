@@ -7,9 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurer;
@@ -17,12 +15,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 //TODO: rewrite to use last versions of libraries
 @Configuration
 @EnableAuthorizationServer
-public class OAuthConfig implements AuthorizationServerConfigurer  {
+public class OAuthConfig implements AuthorizationServerConfigurer {
     @Value("${jwt.clientId}")
     private String clientId;
     @Value("${jwt.client-secret}")
@@ -38,6 +35,10 @@ public class OAuthConfig implements AuthorizationServerConfigurer  {
 
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void configure(final AuthorizationServerSecurityConfigurer security) {
@@ -61,7 +62,7 @@ public class OAuthConfig implements AuthorizationServerConfigurer  {
     public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
                 .accessTokenConverter(accessTokenConverter())
-                .userDetailsService(userDetailsService())
+                .userDetailsService(userDetailsService)
                 .authenticationManager(authenticationManager(authenticationConfiguration));
     }
 
@@ -71,35 +72,18 @@ public class OAuthConfig implements AuthorizationServerConfigurer  {
     }
 
     @Bean
-//    TODO: get from DB (JdbcUserDetailsManager? or just custom implementation of UserDetailsManager)
-    public InMemoryUserDetailsManager userDetailsService() {
-        final UserDetails user = User.builder()
-                .passwordEncoder(passwordEncoder()::encode)
-                .username("nikita")
-                .password("112233")
-//                TODO: add role for the User model
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
-
-    @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         final DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 
-        provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(userDetailsService);
 
         return provider;
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(final AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(
+            final AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }

@@ -1,9 +1,7 @@
 package com.nikita.messenger.server.config;
 
 import com.nikita.messenger.server.data.ChatData;
-import com.nikita.messenger.server.data.MessageData;
 import com.nikita.messenger.server.dto.ChatDTO;
-import com.nikita.messenger.server.dto.MessageDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
