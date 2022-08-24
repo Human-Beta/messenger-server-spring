@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static org.springframework.data.domain.PageRequest.of;
+import static org.springframework.data.domain.Sort.Direction.DESC;
+import static org.springframework.data.domain.Sort.by;
 
 @Service
 public class ChatServiceImpl implements ChatService {
@@ -19,9 +21,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<Chat> getChatsFor(final UserData user, final int page, final int size) {
-//        TODO: add sorting by last message date
-//        return chatRepository.findAllByUserId(user.getId(), PageRequest.of(0, 3, Sort.by("name")));
-        return chatRepository.findAllByUserId(user.getId(), of(page - 1, size));
+        return chatRepository.findAllByUserId(user.getId(), of(page - 1, size, by(DESC, "lastMessage.date")));
     }
 
     @Override

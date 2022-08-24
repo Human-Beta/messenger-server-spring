@@ -27,7 +27,6 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
     @Override
 //    TODO: place for transactional
     public List<MessageData> getMessagesFromChat(final long chatId, final int page, final int size) {
-//        TODO: and check if current user allowed to get messages from the chat
         checkIfChatExists(chatId);
         checkChatAccess(chatId);
 

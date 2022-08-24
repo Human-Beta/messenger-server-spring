@@ -12,7 +12,6 @@ import java.util.List;
 
 @Component
 public class ChatFacadeImpl extends AbstractFacade implements ChatFacade {
-
     @Autowired
     private ChatService chatService;
 

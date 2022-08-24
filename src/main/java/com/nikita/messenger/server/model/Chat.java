@@ -2,6 +2,7 @@ package com.nikita.messenger.server.model;
 
 
 import com.nikita.messenger.server.enums.ChatType;
+import org.hibernate.annotations.JoinFormula;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.List;
 
@@ -25,7 +27,6 @@ public class Chat {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "type_id")
     private ChatType type;
-//    TODO: lazy load users
     @ManyToMany
     @JoinTable(
             name = "chats_users",
@@ -33,6 +34,10 @@ public class Chat {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> users;
+
+    @ManyToOne
+    @JoinFormula("(SELECT m.id FROM messages m WHERE m.chat_id=id ORDER BY m.date DESC LIMIT 1)")
+    private Message lastMessage;
 
     public long getId() {
         return id;
@@ -56,5 +61,13 @@ public class Chat {
 
     public void setUsers(final List<User> users) {
         this.users = users;
+    }
+
+    public Message getLastMessage() {
+        return lastMessage;
+    }
+
+    public void setLastMessage(final Message lastMessage) {
+        this.lastMessage = lastMessage;
     }
 }

@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/chats")
 public class ChatController extends AbstractController {
-
     @Autowired
     private ChatFacade chatFacade;
     @Autowired
@@ -25,7 +24,6 @@ public class ChatController extends AbstractController {
 
     @GetMapping
     public List<ChatDTO> getChats(@Valid final PaginationDTO pagination) {
-//        TODO: need to return chats for a specific user by auth token
         final UserData user = userFacade.getCurrentUser();
         final List<ChatData> chats = chatFacade.getChatsFor(user, pagination.getPage(), pagination.getSize());
 

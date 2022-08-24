@@ -64,9 +64,8 @@ public class ChatConverter extends AbstractConverter<Chat, ChatData> {
     }
 
     private void setLastMessage(final Chat chat, final ChatData chatData) {
-        messageService.getLastMessageFrom(chat)
-                .map(message -> getConversionService().convert(message, MessageData.class))
-                .ifPresent(chatData::setLastMessage);
+        final MessageData messageData = getConversionService().convert(chat.getLastMessage(), MessageData.class);
+        chatData.setLastMessage(messageData);
     }
 
     private void setImageUrl(final User user, final ChatData chatData) {
