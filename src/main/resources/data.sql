@@ -1,4 +1,26 @@
 SET NAMES utf8;
+
+INSERT INTO oauth_client_details
+    (
+        client_id,
+        client_secret,
+        scope,
+        authorized_grant_types,
+        access_token_validity,
+        refresh_token_validity,
+        autoapprove
+    )
+VALUES
+    (
+        "test_id",
+        "$2a$10$zM7fxyYGp3C8TOacd5Luku6PR8uSXq7iLu3GY4W3JIMZVsRTtX2N2",
+        "basic",
+        "password,refresh_token",
+        3600,
+        86400,
+        true
+    );
+
 INSERT INTO users (id, nickname, password, name, avatar_url) VALUES
     (1, "nikita", "123", "Никита Шишов", "/nikita/0"),
     (2, "oleg_ubiyca", "123", "Олег Убийцын", "/oleg_ubiyca/0"),

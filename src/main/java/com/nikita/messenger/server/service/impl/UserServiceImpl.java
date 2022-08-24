@@ -5,6 +5,7 @@ import com.nikita.messenger.server.repository.UserRepository;
 import com.nikita.messenger.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +16,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCurrentUser() {
-        final String nickname = getCurrentUserNickname();
+        final UserDetails userDetails = getCurrentUserDetails();
 
-        return getUserByNickname(nickname);
+        return getUserByNickname(userDetails.getUsername());
     }
 
-    private static String getCurrentUserNickname() {
-        return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private static UserDetails getCurrentUserDetails() {
+        return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     @Override

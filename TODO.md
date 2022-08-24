@@ -8,10 +8,10 @@
   - [ ] registration '/register'
   - [x] login '/login'
 - [x] Spring Security
-- [ ] Save auth clients in DB
-- [ ] Save auth tokens in DB
+- [x] Save auth clients in DB
+- [x] Save auth tokens in DB
+- [ ] Save encoded password in the DB and send encoded password from the UI (BCryptPasswordEncoder)
 
 - [ ] Unit tests
 - [ ] Do not forget about transactions!!
 - [ ] Log
-- [ ] Hash passwords (BCryptPasswordEncoder)
