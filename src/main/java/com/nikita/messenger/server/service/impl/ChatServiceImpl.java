@@ -2,6 +2,7 @@ package com.nikita.messenger.server.service.impl;
 
 import com.nikita.messenger.server.data.UserData;
 import com.nikita.messenger.server.model.Chat;
+import com.nikita.messenger.server.model.User;
 import com.nikita.messenger.server.repository.ChatRepository;
 import com.nikita.messenger.server.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,10 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public boolean exists(final long chatId) {
         return chatRepository.existsById(chatId);
+    }
+
+    @Override
+    public boolean isUserInChat(final User user, final long chatId) {
+        return chatRepository.isUserInChat(user.getId(), chatId);
     }
 }

@@ -17,7 +17,6 @@ public class Config {
     public ModelMapper modelMapper() {
         final ModelMapper modelMapper = new ModelMapper();
 
-//        TODO: check/refactor
         modelMapper.getConfiguration()
                 .setMatchingStrategy(STRICT)
                 .setFieldMatchingEnabled(TRUE)

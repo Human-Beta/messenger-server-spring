@@ -26,7 +26,7 @@ public class MessageController extends AbstractController {
     private MessageFacade messageFacade;
 
     @GetMapping
-    public List<MessageDTO> getMessagesForChat(@RequestParam final long chatId, @Valid final PaginationDTO pagination) {
+    public List<MessageDTO> getMessagesFromChat(@RequestParam final long chatId, @Valid final PaginationDTO pagination) {
         final List<MessageData> messages = messageFacade.getMessagesFromChat(chatId, pagination.getPage(), pagination.getSize());
 
         return mapAll(messages, MessageDTO.class);
@@ -35,13 +35,12 @@ public class MessageController extends AbstractController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
 //    TODO: validation for message?
-//          chat exists?
     public MessageDTO sendMessage(@RequestBody final MessageRequestDTO messageRequest) {
 //        TODO: remove. It is a draft fix for 'Data truncation: Out of range value for column 'local_id' at row 1' error
         messageRequest.setLocalId(0);
         final MessageRequestData messageRequestData = map(messageRequest, MessageRequestData.class);
 
-        final MessageData savedMessage = messageFacade.putMessageToChat(messageRequestData);
+        final MessageData savedMessage = messageFacade.saveMessageToChat(messageRequestData);
 
         return map(savedMessage, MessageDTO.class);
     }
