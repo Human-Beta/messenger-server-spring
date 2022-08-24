@@ -10,7 +10,8 @@
 - [x] Spring Security
 - [x] Save auth clients in DB
 - [x] Save auth tokens in DB
-- [ ] Save encoded password in the DB and send encoded password from the UI (BCryptPasswordEncoder)
+- [x] Save encoded password in the DB
+- [ ] Send encoded password from the UI (BCryptPasswordEncoder)
 
 - [ ] Unit tests
 - [ ] Do not forget about transactions!!

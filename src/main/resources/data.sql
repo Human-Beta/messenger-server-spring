@@ -22,11 +22,11 @@ VALUES
     );
 
 INSERT INTO users (id, nickname, password, name, avatar_url) VALUES
-    (1, "nikita", "123", "Никита Шишов", "/nikita/0"),
-    (2, "oleg_ubiyca", "123", "Олег Убийцын", "/oleg_ubiyca/0"),
-    (3, "kitty", "123", "Котенок Муров", "/kitty/0"),
-    (4, "vasya_voin", "123", "Василий Воинов", "/vasya_voin/0"),
-    (5, "pushka_petrushka", "123", "Пётр Петрушев", "/pushka_petrushka/0");
+    (1, "nikita", "$2a$10$77Hap.i3/6aMHPRpW955lO9mkOQTuW.q6jzmwD.anRSgj75Gn71QS", "Никита Шишов", "/nikita/0"),
+    (2, "oleg_ubiyca", "$2a$10$77Hap.i3/6aMHPRpW955lO9mkOQTuW.q6jzmwD.anRSgj75Gn71QS", "Олег Убийцын", "/oleg_ubiyca/0"),
+    (3, "kitty", "$2a$10$77Hap.i3/6aMHPRpW955lO9mkOQTuW.q6jzmwD.anRSgj75Gn71QS", "Котенок Муров", "/kitty/0"),
+    (4, "vasya_voin", "$2a$10$77Hap.i3/6aMHPRpW955lO9mkOQTuW.q6jzmwD.anRSgj75Gn71QS", "Василий Воинов", "/vasya_voin/0"),
+    (5, "pushka_petrushka", "$2a$10$77Hap.i3/6aMHPRpW955lO9mkOQTuW.q6jzmwD.anRSgj75Gn71QS", "Пётр Петрушев", "/pushka_petrushka/0");
 
 INSERT INTO chat_types (id, name) VALUES
     (0, "PRIVATE"),
