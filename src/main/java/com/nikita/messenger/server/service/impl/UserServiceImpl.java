@@ -1,27 +1,34 @@
 package com.nikita.messenger.server.service.impl;
 
 import com.nikita.messenger.server.model.User;
+import com.nikita.messenger.server.repository.UserRepository;
 import com.nikita.messenger.server.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public User getCurrentUser() {
-//        TODO: return current user from session?
-        return createUser(0, "nikita_pobrito", "0", "Никита", "#");
+        final UserDetails userDetails = getCurrentUserDetails();
+
+        return getUserByNickname(userDetails.getUsername());
     }
 
-    private User createUser(final long id, final String nickName, final String password, final String name,
-                            final String avatarUrl) {
-        final User user = new User();
-
-        user.setId(id);
-        user.setNickName(nickName);
-        user.setPassword(password);
-        user.setName(name);
-        user.setAvatarUrl(avatarUrl);
-
-        return user;
+    private static UserDetails getCurrentUserDetails() {
+        return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+
+    @Override
+    public User getUserByNickname(final String nickname) {
+        return userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new UsernameNotFoundException("There is no user with nickname: " + nickname));
+    }
+
 }

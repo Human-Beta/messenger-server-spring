@@ -6,10 +6,13 @@
     - [x] GET - get messages from chatId
     - [x] POST - put message to chatId
   - [ ] registration '/register'
-    - [ ] Spring Security? Roles?
-  - [ ] login '/login'
+  - [x] login '/login'
+- [x] Spring Security
+- [x] Save auth clients in DB
+- [x] Save auth tokens in DB
+- [x] Save encoded password in the DB
+- [ ] Send encoded password from the UI (BCryptPasswordEncoder)
 
 - [ ] Unit tests
 - [ ] Do not forget about transactions!!
 - [ ] Log
-- [ ] Hash passwords (BCryptPasswordEncoder)

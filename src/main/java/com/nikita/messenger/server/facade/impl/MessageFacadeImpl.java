@@ -3,10 +3,13 @@ package com.nikita.messenger.server.facade.impl;
 import com.nikita.messenger.server.data.MessageData;
 import com.nikita.messenger.server.data.MessageRequestData;
 import com.nikita.messenger.server.exception.ChatNotFoundException;
+import com.nikita.messenger.server.exception.ChatAccessException;
 import com.nikita.messenger.server.facade.MessageFacade;
 import com.nikita.messenger.server.model.Message;
+import com.nikita.messenger.server.model.User;
 import com.nikita.messenger.server.service.ChatService;
 import com.nikita.messenger.server.service.MessageService;
+import com.nikita.messenger.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,11 +21,15 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
     private MessageService messageService;
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private UserService userService;
 
     @Override
 //    TODO: place for transactional
     public List<MessageData> getMessagesFromChat(final long chatId, final int page, final int size) {
+//        TODO: and check if current user allowed to get messages from the chat
         checkIfChatExists(chatId);
+        checkChatAccess(chatId);
 
         final List<Message> messages = messageService.getMessagesFromChat(chatId, page, size);
 
@@ -30,22 +37,27 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
     }
 
     private void checkIfChatExists(final long chatId) {
-        if (chatService.getChat(chatId).isEmpty()) {
+        if (!chatService.exists(chatId)) {
             throw new ChatNotFoundException(chatId);
+        }
+    }
+
+    private void checkChatAccess(final long chatId) {
+        final User user = userService.getCurrentUser();
+        if (!chatService.isUserInChat(user, chatId)) {
+            throw new ChatAccessException(user, chatId);
         }
     }
 
     @Override
 //    TODO: place for transactional
-    public MessageData putMessageToChat(final MessageRequestData messageRequestData) {
-//        TODO: and check if current user able to send message into it
+    public MessageData saveMessageToChat(final MessageRequestData messageRequestData) {
         checkIfChatExists(messageRequestData.getChatId());
+        checkChatAccess(messageRequestData.getChatId());
 
         final Message message = convert(messageRequestData, Message.class);
 
-        final long messageId = messageService.putMessageToChat(message);
-        final Message savedMessage = messageService.getMessage(messageId)
-                .orElseThrow(() -> new IllegalStateException("There is no message with id " + messageId));
+        final Message savedMessage = messageService.saveMessageToChat(message);
 
         return convert(savedMessage, MessageData.class);
     }

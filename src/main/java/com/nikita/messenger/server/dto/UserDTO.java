@@ -1,17 +1,25 @@
 package com.nikita.messenger.server.dto;
 
-//TODO: Do I need it?
 public class UserDTO {
-    private String nickName;
+    private long id;
+    private String nickname;
     private String name;
     private String avatarUrl;
 
-    public String getNickName() {
-        return nickName;
+    public long getId() {
+        return id;
     }
 
-    public void setNickName(final String nickName) {
-        this.nickName = nickName;
+    public void setId(final long id) {
+        this.id = id;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(final String nickname) {
+        this.nickname = nickname;
     }
 
     public String getName() {

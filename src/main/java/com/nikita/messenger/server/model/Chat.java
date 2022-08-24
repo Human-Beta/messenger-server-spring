@@ -3,12 +3,35 @@ package com.nikita.messenger.server.model;
 
 import com.nikita.messenger.server.enums.ChatType;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.List;
 
+@Entity
+@Table(name = "chats")
 public class Chat {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "type_id")
     private ChatType type;
 //    TODO: lazy load users
+    @ManyToMany
+    @JoinTable(
+            name = "chats_users",
+            joinColumns = @JoinColumn(name = "chat_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private List<User> users;
 
     public long getId() {

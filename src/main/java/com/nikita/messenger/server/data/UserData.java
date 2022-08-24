@@ -2,7 +2,7 @@ package com.nikita.messenger.server.data;
 
 public class UserData {
     private long id;
-    private String nickName;
+    private String nickname;
     private String name;
     private String avatarUrl;
 
@@ -14,12 +14,12 @@ public class UserData {
         this.id = id;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(final String nickName) {
-        this.nickName = nickName;
+    public void setNickname(final String nickname) {
+        this.nickname = nickname;
     }
 
     public String getName() {
