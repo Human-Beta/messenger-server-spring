@@ -31,4 +31,14 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("There is no user with nickname: " + nickname));
     }
 
+    @Override
+    public User save(final User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public boolean existsByNickname(final String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
+
 }

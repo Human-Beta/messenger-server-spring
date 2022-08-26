@@ -49,7 +49,7 @@ INSERT INTO chats_users (chat_id, user_id) VALUES
     (4, 1),
     (4, 5);
 
-INSERT INTO messages (localId, chatId, senderId, value, date) VALUES
+INSERT INTO messages (local_id, chat_id, sender_id, value, date) VALUES
 --  Nikita and Oleg's messages
     (1, 1, 2, "Привет!", "2022-06-12 08:23:00"),
     (2, 1, 1, "Хэлооооу", "2022-06-12 11:02:00"),

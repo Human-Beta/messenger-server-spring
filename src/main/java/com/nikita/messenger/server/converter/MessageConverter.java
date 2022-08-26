@@ -2,10 +2,11 @@ package com.nikita.messenger.server.converter;
 
 import com.nikita.messenger.server.data.MessageData;
 import com.nikita.messenger.server.model.Message;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MessageConverter extends AbstractConverter<Message, MessageData> {
+public class MessageConverter implements Converter<Message, MessageData> {
 
     @Override
     public MessageData convert(final Message message) {

@@ -7,4 +7,7 @@ public interface UserService {
 
     User getUserByNickname(String nickname);
 
+    User save(User user);
+
+    boolean existsByNickname(String nickname);
 }

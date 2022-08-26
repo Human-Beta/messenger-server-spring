@@ -1,6 +1,6 @@
 CREATE TABLE users (
     id INTEGER NOT NULL AUTO_INCREMENT,
-    nickname VARCHAR(32) NOT NULL,
+    nickname VARCHAR(32) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     name VARCHAR (64) NOT NULL,
     avatar_url VARCHAR(64),
@@ -9,8 +9,8 @@ CREATE TABLE users (
 );
 
 CREATE TABLE chat_types (
-    id INTEGER NOT NULL AUTO_INCREMENT,
-    name VARCHAR(10) NOT NULL,
+    id INTEGER NOT NULL,
+    name VARCHAR(10) NOT NULL UNIQUE,
 
     PRIMARY KEY (id)
 );
@@ -35,14 +35,14 @@ CREATE TABLE chats_users (
 
 CREATE TABLE messages (
     id INTEGER NOT NULL AUTO_INCREMENT,
-    localId INTEGER NOT NULL,
-    chatId INTEGER NOT NULL,
-    senderId INTEGER NOT NULL,
+    local_id INTEGER NOT NULL,
+    chat_id INTEGER NOT NULL,
+    sender_id INTEGER NOT NULL,
     value TEXT NOT NULL,
     date TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (senderId) REFERENCES users(id),
-    FOREIGN KEY (chatId) REFERENCES chats(id),
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (chat_id) REFERENCES chats(id),
     PRIMARY KEY (id)
 );
 
