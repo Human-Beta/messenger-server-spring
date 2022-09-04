@@ -14,6 +14,9 @@ public interface ChatRepository extends CrudRepository<Chat, Long> {
     @Query("SELECT c FROM Chat c INNER JOIN c.users u WHERE u.id=:userId")
     List<Chat> findAllByUserId(@Param("userId") long userId, PageRequest pageable);
 
+    @Query("SELECT c FROM Chat c INNER JOIN c.users u WHERE u.id=:userId")
+    List<Chat> findAllByUserId(@Param("userId") long userId);
+
     @Query("SELECT count(c) = 1 FROM Chat c INNER JOIN c.users u WHERE c.id=:chatId AND u.id=:userId")
     boolean isUserInChat(@Param("userId") long userId, @Param("chatId") long chatId);
 }

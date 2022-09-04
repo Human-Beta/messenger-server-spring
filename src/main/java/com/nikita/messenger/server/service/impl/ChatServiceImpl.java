@@ -1,6 +1,5 @@
 package com.nikita.messenger.server.service.impl;
 
-import com.nikita.messenger.server.data.UserData;
 import com.nikita.messenger.server.model.Chat;
 import com.nikita.messenger.server.model.User;
 import com.nikita.messenger.server.repository.ChatRepository;
@@ -20,8 +19,13 @@ public class ChatServiceImpl implements ChatService {
     private ChatRepository chatRepository;
 
     @Override
-    public List<Chat> getChatsFor(final UserData user, final int page, final int size) {
+    public List<Chat> getChatsFor(final User user, final int page, final int size) {
         return chatRepository.findAllByUserId(user.getId(), of(page - 1, size, by(DESC, "lastMessage.date")));
+    }
+
+    @Override
+    public List<Chat> getAllChatsFor(final User user) {
+        return chatRepository.findAllByUserId(user.getId());
     }
 
     @Override

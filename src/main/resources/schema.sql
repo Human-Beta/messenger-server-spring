@@ -39,7 +39,7 @@ CREATE TABLE messages (
     chat_id INTEGER NOT NULL,
     sender_id INTEGER NOT NULL,
     value TEXT NOT NULL,
-    date TIMESTAMP NOT NULL,
+    date TIMESTAMP(4) NOT NULL,
 
     FOREIGN KEY (sender_id) REFERENCES users(id),
     FOREIGN KEY (chat_id) REFERENCES chats(id),

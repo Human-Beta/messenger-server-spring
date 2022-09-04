@@ -9,6 +9,7 @@ import com.nikita.messenger.server.model.Message;
 import com.nikita.messenger.server.model.User;
 import com.nikita.messenger.server.service.ChatService;
 import com.nikita.messenger.server.service.MessageService;
+import com.nikita.messenger.server.service.SocketIOService;
 import com.nikita.messenger.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,11 +24,14 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
     private ChatService chatService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SocketIOService socketIOService;
 
     @Override
 //    TODO: place for transactional
     public List<MessageData> getMessagesFromChat(final long chatId, final int page, final int size) {
         checkIfChatExists(chatId);
+//        TODO: can I use spring security here? Maybe something like hasRole(tra_la_la)?
         checkChatAccess(chatId);
 
         final List<Message> messages = messageService.getMessagesFromChat(chatId, page, size);
@@ -52,11 +56,14 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
 //    TODO: place for transactional
     public MessageData saveMessageToChat(final MessageRequestData messageRequestData) {
         checkIfChatExists(messageRequestData.getChatId());
+//        TODO: can I use spring security here? Maybe something like hasRole(tra_la_la)?
         checkChatAccess(messageRequestData.getChatId());
 
         final Message message = convert(messageRequestData, Message.class);
 
         final Message savedMessage = messageService.saveMessageToChat(message);
+
+        socketIOService.sendMessage(savedMessage);
 
         return convert(savedMessage, MessageData.class);
     }

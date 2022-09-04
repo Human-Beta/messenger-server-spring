@@ -1,103 +1,117 @@
 package com.nikita.messenger.server.service.impl;
 
-import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIONamespace;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.nikita.messenger.server.dto.MessageDTO;
+import com.nikita.messenger.server.model.Chat;
+import com.nikita.messenger.server.model.Message;
+import com.nikita.messenger.server.model.User;
+import com.nikita.messenger.server.service.ChatService;
 import com.nikita.messenger.server.service.SocketIOService;
+import com.nikita.messenger.server.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.UUID;
-
-import static java.util.stream.Collectors.joining;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class SocketIOServiceImpl implements SocketIOService {
-
     private static final Logger LOG = LoggerFactory.getLogger(SocketIOServiceImpl.class);
 
     private static final String MESSAGE_EVENT = "message";
+    private static final String TOKEN_URL_PARAM = "token";
 
     @Autowired
-    private final SocketIOServer socketIOServer;
+    private SocketIOServer socketIOServer;
+    @Autowired
+    private ResourceServerTokenServices tokenServices;
+    @Autowired
+    private ChatService chatService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ModelMapper modelMapper;
 
-    private SocketIONamespace chatNamespace;
+    private SocketIONamespace messengerNamespace;
 
-    public SocketIOServiceImpl(final SocketIOServer socketIOServer) {
-        this.socketIOServer = socketIOServer;
-    }
+    private final Map<Long, UUID> clients = new ConcurrentHashMap<>();
 
     @Override
     public void start() {
-        chatNamespace = socketIOServer.addNamespace("/chat");
+        messengerNamespace = socketIOServer.addNamespace("/messenger");
 
-        chatNamespace.addConnectListener(this::onConnect);
-        chatNamespace.addDisconnectListener(this::onDisconnect);
-        chatNamespace.addEventListener("chat", MessageDTO.class, this::onMessage);
-
-
-//        socketIOServer.addConnectListener(this::onConnect);
-//        socketIOServer.addDisconnectListener(this::onDisconnect);
-////        socketIOServer.addEventListener("chat", MessageDTO.class, this::onMessage);
-//        socketIOServer.addEventListener("chat", Object.class, this::test);
+        messengerNamespace.addConnectListener(this::onConnect);
+        messengerNamespace.addDisconnectListener(this::onDisconnect);
 
         socketIOServer.start();
-
-//        socketIOServer.getAllNamespaces().stream().map(SocketIONamespace::getName).forEach(System.out::println);
-
-//        final Configuration config = socketIOServer.getConfiguration();
-//        LOG.debug("Socket IO server started on host '{}' and port '{}'!", config.getHostname(), config.getPort());
-    }
-
-    private void test(final SocketIOClient socketIOClient, final Object o, final AckRequest ackRequest) {
-        System.out.println(o);
     }
 
     private void onConnect(final SocketIOClient client) {
-        LOG.debug("Client connected!!!");
+        LOG.debug("Client connected {}!!!", client.getSessionId());
 
-//        client.joinRoom("room1");
+        final User user = getCurrentUser(client);
 
-//        socketIOServer.getBroadcastOperations().sendEvent("test", "Hello");
-//        logClientInfo(client);
+        chatService.getAllChatsFor(user).stream()
+                .map(Chat::getId)
+                .map(chatId -> Long.toString(chatId))
+                .forEach(client::joinRoom);
+
+        clients.put(user.getId(), client.getSessionId());
+
+        LOG.debug("Clients {}", clients);
     }
 
-    private void logClientInfo(final SocketIOClient client) {
-        LOG.debug("All clients in the namespace: {}", getAllClientsFrom(client.getNamespace()));
-        LOG.debug("Namespace: '{}'", client.getNamespace().getName());
-        LOG.debug("Session id: {}", client.getSessionId());
-        LOG.debug("Handshake data: {}", client.getHandshakeData());
-        LOG.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-    }
+    private void authenticate(final SocketIOClient client) {
+        final String token = client.getHandshakeData().getUrlParams().get(TOKEN_URL_PARAM).get(0);
 
-    private String getAllClientsFrom(final SocketIONamespace namespace) {
-        return namespace.getAllClients().stream()
-                .map(SocketIOClient::getSessionId)
-                .map(UUID::toString)
-                .collect(joining(", "));
+        final OAuth2Authentication authentication = tokenServices.loadAuthentication(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     private void onDisconnect(final SocketIOClient client) {
-        LOG.debug("Client disconnected!!!");
-//        logClientInfo(client);
+        final User user = getCurrentUser(client);
+
+        clients.remove(user.getId());
+
+        LOG.debug("Client disconnected {}!!!", client.getSessionId());
+        LOG.debug("Clients {}", clients);
     }
 
-    @SuppressWarnings("unused")
-    private void onMessage(final SocketIOClient client, final MessageDTO message, final AckRequest ackRequest) {
-        LOG.debug("Client: {}", client.getSessionId());
-        LOG.debug("Received message: {}", message);
-//        chatNamespace.getBroadcastOperations().sendEvent(MESSAGE_EVENT, message);
-//        chatNamespace.getBroadcastOperations().sendEvent("test", message);
-        socketIOServer.getBroadcastOperations().sendEvent("chat", message);
+    @Override
+    public void sendMessage(final Message message) {
+        final SocketIOClient client = getCurrentClient();
+
+        final MessageDTO messageDTO = modelMapper.map(message, MessageDTO.class);
+
+        messengerNamespace.getRoomOperations(Long.toString(messageDTO.getChatId()))
+                .sendEvent(MESSAGE_EVENT, client, messageDTO);
+    }
+
+    private User getCurrentUser(final SocketIOClient client) {
+//        TODO: use authorizationListener? (look at com/nikita/messenger/server/config/SocketConfig.java:22)
+        authenticate(client);
+
+        return userService.getCurrentUser();
+    }
+
+    private SocketIOClient getCurrentClient() {
+        final User user = userService.getCurrentUser();
+
+        return messengerNamespace.getClient(clients.get(user.getId()));
     }
 
     @Override
     public void stop() {
-        LOG.debug("Socket IO server stopped!");
+        LOG.debug("Socket IO server is stopped!");
         socketIOServer.stop();
     }
 }

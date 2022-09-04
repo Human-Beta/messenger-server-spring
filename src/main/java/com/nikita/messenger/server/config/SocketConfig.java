@@ -4,10 +4,9 @@ import com.corundumstudio.socketio.SocketIOServer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 @Configuration
-public class ConfigWithSocket {
+public class SocketConfig {
 
 	@Value("${socket.server.host}")
 	private String host;
@@ -19,6 +18,10 @@ public class ConfigWithSocket {
 		final com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
 		config.setHostname(host);
 		config.setPort(port);
+//		TODO: do I need it?
+//		config.setAuthorizationListener();
+//		config.setOrigin();
+//		config.setExceptionListener();
 
 		return new SocketIOServer(config);
 	}
