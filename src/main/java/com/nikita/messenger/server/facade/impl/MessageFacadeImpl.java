@@ -2,8 +2,8 @@ package com.nikita.messenger.server.facade.impl;
 
 import com.nikita.messenger.server.data.MessageData;
 import com.nikita.messenger.server.data.MessageRequestData;
-import com.nikita.messenger.server.exception.ChatNotFoundException;
 import com.nikita.messenger.server.exception.ChatAccessException;
+import com.nikita.messenger.server.exception.ChatNotFoundException;
 import com.nikita.messenger.server.facade.MessageFacade;
 import com.nikita.messenger.server.model.Message;
 import com.nikita.messenger.server.model.User;
@@ -14,6 +14,7 @@ import com.nikita.messenger.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -29,12 +30,12 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
 
     @Override
 //    TODO: place for transactional
-    public List<MessageData> getMessagesFromChat(final long chatId, final int page, final int size) {
+    public List<MessageData> getMessagesFromChat(final long chatId, final Date sinceDate, final int size) {
         checkIfChatExists(chatId);
 //        TODO: can I use spring security here? Maybe something like hasRole(tra_la_la)?
         checkChatAccess(chatId);
 
-        final List<Message> messages = messageService.getMessagesFromChat(chatId, page, size);
+        final List<Message> messages = messageService.getMessagesFromChat(chatId, sinceDate, size);
 
         return convertAll(messages, MessageData.class);
     }

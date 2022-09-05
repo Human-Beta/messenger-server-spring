@@ -4,7 +4,6 @@ import com.nikita.messenger.server.data.MessageData;
 import com.nikita.messenger.server.data.MessageRequestData;
 import com.nikita.messenger.server.dto.MessageDTO;
 import com.nikita.messenger.server.dto.MessageRequestDTO;
-import com.nikita.messenger.server.dto.PaginationDTO;
 import com.nikita.messenger.server.facade.MessageFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -26,8 +25,11 @@ public class MessageController extends AbstractController {
     private MessageFacade messageFacade;
 
     @GetMapping
-    public List<MessageDTO> getMessagesFromChat(@RequestParam final long chatId, @Valid final PaginationDTO pagination) {
-        final List<MessageData> messages = messageFacade.getMessagesFromChat(chatId, pagination.getPage(), pagination.getSize());
+//    TODO: use Pageable instead of PaginationDTO
+    public List<MessageDTO> getMessagesFromChat(@RequestParam final long chatId,
+//                                                   TODO: validate that date is not in the future?
+                                                @RequestParam final Date sinceDate, @RequestParam final int size) {
+        final List<MessageData> messages = messageFacade.getMessagesFromChat(chatId, sinceDate, size);
 
         return mapAll(messages, MessageDTO.class);
     }
