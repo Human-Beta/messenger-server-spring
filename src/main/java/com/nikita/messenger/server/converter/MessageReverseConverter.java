@@ -12,7 +12,6 @@ public class MessageReverseConverter implements Converter<MessageData, Message> 
         final Message message = new Message();
 
         message.setId(messageData.getId());
-        message.setLocalId(messageData.getLocalId());
         message.setValue(messageData.getValue());
         message.setChatId(messageData.getChatId());
         message.setSenderId(messageData.getSenderId());

@@ -11,7 +11,6 @@ public class MessageDataRequestToMessageConverter implements Converter<MessageRe
     public Message convert(final MessageRequestData request) {
         final Message message = new Message();
 
-        message.setLocalId(request.getLocalId());
         message.setValue(request.getValue());
         message.setChatId(request.getChatId());
 

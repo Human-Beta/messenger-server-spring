@@ -4,7 +4,6 @@ import java.util.Date;
 
 public class MessageData {
     private long id;
-    private long localId;
     private long senderId;
     private long chatId;
     private String value;
@@ -16,14 +15,6 @@ public class MessageData {
 
     public void setId(final long id) {
         this.id = id;
-    }
-
-    public long getLocalId() {
-        return localId;
-    }
-
-    public void setLocalId(final long localId) {
-        this.localId = localId;
     }
 
     public long getSenderId() {
