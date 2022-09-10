@@ -35,7 +35,6 @@ CREATE TABLE chats_users (
 
 CREATE TABLE messages (
     id INTEGER NOT NULL AUTO_INCREMENT,
-    local_id INTEGER NOT NULL,
     chat_id INTEGER NOT NULL,
     sender_id INTEGER NOT NULL,
     value TEXT NOT NULL,

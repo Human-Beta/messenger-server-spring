@@ -14,8 +14,6 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "local_id")
-    private long localId;
     @Column(name = "sender_id")
     private long senderId;
     @Column(name = "chat_id")
@@ -31,14 +29,6 @@ public class Message {
 
     public void setId(final long id) {
         this.id = id;
-    }
-
-    public long getLocalId() {
-        return localId;
-    }
-
-    public void setLocalId(final long localId) {
-        this.localId = localId;
     }
 
     public long getSenderId() {

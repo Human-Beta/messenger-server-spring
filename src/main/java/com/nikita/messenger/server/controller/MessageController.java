@@ -21,11 +21,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/messages")
 public class MessageController extends AbstractController {
+
     @Autowired
     private MessageFacade messageFacade;
 
     @GetMapping
-//    TODO: use Pageable instead of PaginationDTO
     public List<MessageDTO> getMessagesFromChat(@RequestParam final long chatId,
 //                                                   TODO: validate that date is not in the future?
                                                 @RequestParam final Date sinceDate, @RequestParam final int size) {
@@ -38,8 +38,6 @@ public class MessageController extends AbstractController {
     @ResponseStatus(HttpStatus.CREATED)
 //    TODO: validation for message?
     public MessageDTO sendMessage(@RequestBody final MessageRequestDTO messageRequest) {
-//        TODO: remove. It is a draft fix for 'Data truncation: Out of range value for column 'local_id' at row 1' error
-        messageRequest.setLocalId(0);
         final MessageRequestData messageRequestData = map(messageRequest, MessageRequestData.class);
 
         final MessageData savedMessage = messageFacade.saveMessageToChat(messageRequestData);
