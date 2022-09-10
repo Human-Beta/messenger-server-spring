@@ -22,7 +22,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Message> getMessagesFromChat(final long chatId, final Date sinceDate, final int size) {
-        return messageRepository.findAllByChatId(chatId, sinceDate, ofSize(size).withSort(DESC, "date"));
+        return messageRepository.findAllByChatIdSinceDate(chatId, sinceDate, ofSize(size).withSort(DESC, "date"));
     }
 
     @Override

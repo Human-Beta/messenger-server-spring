@@ -20,8 +20,12 @@ import org.springframework.security.oauth2.provider.token.ResourceServerTokenSer
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 @Service
 public class SocketIOServiceImpl implements SocketIOService {
@@ -82,31 +86,40 @@ public class SocketIOServiceImpl implements SocketIOService {
 
         clients.remove(user.getId());
 
-        LOG.debug("Client disconnected {}!!!", client.getSessionId());
+        LOG.debug("Client disconnected {}", client.getSessionId());
         LOG.debug("Clients {}", clients);
     }
 
     @Override
     public void sendMessage(final Message message) {
-        final SocketIOClient client = getCurrentClient();
-
         final MessageDTO messageDTO = modelMapper.map(message, MessageDTO.class);
+        final String room = Long.toString(messageDTO.getChatId());
 
-        messengerNamespace.getRoomOperations(Long.toString(messageDTO.getChatId()))
-                .sendEvent(MESSAGE_EVENT, client, messageDTO);
+        getCurrentClient().ifPresentOrElse(
+                client -> messengerNamespace.getRoomOperations(room).sendEvent(MESSAGE_EVENT, client, messageDTO),
+                () -> messengerNamespace.getRoomOperations(room).sendEvent(MESSAGE_EVENT, messageDTO)
+        );
     }
 
     private User getCurrentUser(final SocketIOClient client) {
-//        TODO: use authorizationListener? (look at com/nikita/messenger/server/config/SocketConfig.java:22)
         authenticate(client);
 
         return userService.getCurrentUser();
     }
 
-    private SocketIOClient getCurrentClient() {
+    private Optional<SocketIOClient> getCurrentClient() {
         final User user = userService.getCurrentUser();
 
-        return messengerNamespace.getClient(clients.get(user.getId()));
+        final UUID clientUUID = clients.get(user.getId());
+        if (clientUUID != null) {
+            LOG.debug("Found socket client UUID {}", clientUUID);
+
+            return of(messengerNamespace.getClient(clientUUID));
+        }
+
+        LOG.warn("Socket connection was not established for user {}", user.getNickname());
+
+        return empty();
     }
 
     @Override
