@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.springframework.data.domain.PageRequest.of;
+import static org.springframework.data.domain.PageRequest.ofSize;
+import static org.springframework.data.domain.Pageable.unpaged;
 import static org.springframework.data.domain.Sort.Direction.DESC;
-import static org.springframework.data.domain.Sort.by;
 
 @Service
 public class ChatServiceImpl implements ChatService {
@@ -19,13 +19,14 @@ public class ChatServiceImpl implements ChatService {
     private ChatRepository chatRepository;
 
     @Override
-    public List<Chat> getChatsFor(final User user, final int page, final int size) {
-        return chatRepository.findAllByUserId(user.getId(), of(page - 1, size, by(DESC, "lastMessage.date")));
+    public List<Chat> getChatsForUserExcludeIds(final User user, final List<Long> excludeIds, final int size) {
+        return chatRepository.findAllByUsersIdAndIdNotIn(user.getId(), excludeIds,
+                                                         ofSize(size).withSort(DESC, "lastMessage.date"));
     }
 
     @Override
     public List<Chat> getAllChatsFor(final User user) {
-        return chatRepository.findAllByUserId(user.getId());
+        return chatRepository.findAllByUsersId(user.getId(), unpaged());
     }
 
     @Override

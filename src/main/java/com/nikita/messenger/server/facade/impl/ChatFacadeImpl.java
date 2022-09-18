@@ -19,10 +19,10 @@ public class ChatFacadeImpl extends AbstractFacade implements ChatFacade {
     private UserService userService;
 
     @Override
-    public List<ChatData> getChatsForCurrentUser(final int page, final int size) {
+    public List<ChatData> getChatsForCurrentUserExcludeIds(final List<Long> excludeIds, final int size) {
         final User user = userService.getCurrentUser();
 
-        final List<Chat> chats = chatService.getChatsFor(user, page, size);
+        final List<Chat> chats = chatService.getChatsForUserExcludeIds(user, excludeIds, size);
 
         return convertAll(chats, ChatData.class);
     }

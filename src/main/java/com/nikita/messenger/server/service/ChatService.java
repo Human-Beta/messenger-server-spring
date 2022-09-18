@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ChatService {
 
-    List<Chat> getChatsFor(User user, final int page, final int size);
+    List<Chat> getChatsForUserExcludeIds(User user, List<Long> excludeIds, int size);
 
     List<Chat> getAllChatsFor(User user);
 

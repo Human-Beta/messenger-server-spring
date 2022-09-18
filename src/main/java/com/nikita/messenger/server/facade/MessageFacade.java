@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface MessageFacade {
-    List<MessageData> getMessagesFromChat(long chatId, final Date sinceDate, final int size);
+    List<MessageData> getMessagesFromChat(long chatId, Date sinceDate, int size);
 
     MessageData saveMessageToChat(MessageRequestData messageRequestData);
 }

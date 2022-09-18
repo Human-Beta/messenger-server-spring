@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ChatFacade {
 
-    List<ChatData> getChatsForCurrentUser(final int page, final int size);
+    List<ChatData> getChatsForCurrentUserExcludeIds(List<Long> excludeIds, int size);
 }
