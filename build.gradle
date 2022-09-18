@@ -2,6 +2,8 @@ plugins {
 	id 'org.springframework.boot' version '2.7.0'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'jacoco'
+	id 'org.barfuin.gradle.jacocolog' version '1.0.1'
 }
 
 group = 'com.nikita.messenger'
@@ -25,6 +27,19 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.named('test') {
+test {
 	useJUnitPlatform()
+
+	filter {
+		excludeTestsMatching '*.integration.*'
+	}
+}
+
+task test_with_integration_tests(type: Test) {
+	dependsOn 'testClasses'
+	useJUnitPlatform()
+
+	filter {
+		includeTestsMatching '*.integration.*'
+	}
 }
