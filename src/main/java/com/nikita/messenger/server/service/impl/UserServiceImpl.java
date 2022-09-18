@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
         return getUserByNickname(userDetails.getUsername());
     }
 
-    private static UserDetails getCurrentUserDetails() {
+    protected UserDetails getCurrentUserDetails() {
         return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
