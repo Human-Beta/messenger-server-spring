@@ -20,8 +20,18 @@ public class ChatController extends AbstractController {
     @GetMapping
     public List<ChatDTO> getChatsForCurrentUser(
             @RequestParam(required = false, defaultValue = "-1") final List<Long> excludeIds,
-            @RequestParam final int size) {
+            @RequestParam(defaultValue = "50") final int size) {
         final List<ChatData> chats = chatFacade.getChatsForCurrentUserExcludeIds(excludeIds, size);
+
+        return mapAll(chats, ChatDTO.class);
+    }
+
+    @GetMapping("/search")
+    public List<ChatDTO> getChatsWithNameStartsWith(
+            @RequestParam final String name,
+            @RequestParam(required = false, defaultValue = "1") final int page,
+            @RequestParam(defaultValue = "50") final int size) {
+        final List<ChatData> chats = chatFacade.getChatsForCurrentUserWithNameStarsWith(name, page, size);
 
         return mapAll(chats, ChatDTO.class);
     }
