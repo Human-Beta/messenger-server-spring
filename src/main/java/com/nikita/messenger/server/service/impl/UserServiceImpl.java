@@ -9,6 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static org.springframework.data.domain.PageRequest.of;
+import static org.springframework.data.domain.Sort.by;
+
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -41,4 +46,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByNickname(nickname);
     }
 
+    @Override
+    public List<User> getUsersByNicknameExcludeIds(final String nickname, final List<Long> excludedIds, final int page,
+                                                   final int size) {
+        return userRepository.findAllByNicknameStartingWithAndIdNotIn(nickname, excludedIds,
+                                                                      of(page - 1, size).withSort(by("id")));
+    }
 }

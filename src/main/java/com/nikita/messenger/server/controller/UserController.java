@@ -2,6 +2,7 @@ package com.nikita.messenger.server.controller;
 
 import com.nikita.messenger.server.data.UserData;
 import com.nikita.messenger.server.data.UserRegistrationData;
+import com.nikita.messenger.server.dto.PaginationDTO;
 import com.nikita.messenger.server.dto.UserDTO;
 import com.nikita.messenger.server.dto.UserRegistrationDTO;
 import com.nikita.messenger.server.facade.UserFacade;
@@ -11,8 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -37,4 +42,12 @@ public class UserController extends AbstractController {
         return map(createdUser, UserDTO.class);
     }
 
+    @GetMapping("/unknown")
+    public List<UserDTO> getUnknownUsersByNickname(@RequestParam final String nickname,
+                                                   @Valid final PaginationDTO pagination) {
+        final List<UserData> users = userFacade.getUnknownUsersByNickname(nickname, pagination.getPage(),
+                                                                          pagination.getSize());
+
+        return mapAll(users, UserDTO.class);
+    }
 }

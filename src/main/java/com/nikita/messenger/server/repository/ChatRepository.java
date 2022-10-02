@@ -1,5 +1,6 @@
 package com.nikita.messenger.server.repository;
 
+import com.nikita.messenger.server.enums.ChatType;
 import com.nikita.messenger.server.model.Chat;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +11,9 @@ import java.util.List;
 
 @Repository
 public interface ChatRepository extends CrudRepository<Chat, Long> {
-    List<Chat> findAllByUsersId(long id, Pageable pageable);
+    List<Chat> findAllByUsersId(long id);
+
+    List<Chat> findAllByUsersIdAndType(long id, ChatType chatType);
 
     List<Chat> findAllByUsersIdAndIdNotIn(long id, List<Long> ids, Pageable pageable);
 

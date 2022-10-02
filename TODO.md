@@ -5,14 +5,15 @@
   - [x] messages for a specific chatId - '/chats/{id}/messages'
     - [x] GET - get messages from chatId
     - [x] POST - put message to chatId
-  - [ ] registration '/register'
+  - [x] registration '/register'
   - [x] login '/login'
+  - [x] Search for chats with name/chatName starts with
 - [x] Spring Security
 - [x] Save auth clients in DB
 - [x] Save auth tokens in DB
 - [x] Save encoded password in the DB
 - [ ] Send encoded password from the UI (BCryptPasswordEncoder)
-
+- [ ] Replace 4 spaces with tab symbol in the WHOLE project
 - [ ] Unit tests
 - [ ] Do not forget about transactions!!
 - [ ] Log

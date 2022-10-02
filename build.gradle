@@ -35,11 +35,15 @@ test {
 	}
 }
 
-task test_with_integration_tests(type: Test) {
+task integration_tests(type: Test) {
 	dependsOn 'testClasses'
 	useJUnitPlatform()
 
 	filter {
 		includeTestsMatching '*.integration.*'
 	}
+}
+
+jacocoTestReport {
+	dependsOn test
 }

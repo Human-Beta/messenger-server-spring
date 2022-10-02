@@ -5,38 +5,51 @@ import com.nikita.messenger.server.model.User;
 import com.nikita.messenger.server.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.List;
 
 import static java.lang.Boolean.TRUE;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
-    static final String NICKNAME = "nickname";
+    private static final String NICKNAME = "nickname";
+    private static final List<Long> EXCLUDED_IDS = List.of(42L);
+    private static final int PAGE = 123;
+    private static final int SIZE = 321;
 
     @Spy
     @InjectMocks
-    UserServiceImpl userService;
+    private UserServiceImpl userService;
 
     @Mock
-    UserRepository userRepository;
-
+    private UserRepository userRepository;
     @Mock
-    UserDetails userDetails;
+    private UserDetails userDetails;
+    @Captor
+    private ArgumentCaptor<Pageable> paginationCaptor;
 
-    final User user = new User();
+    private final User user = new User();
 
     void mockGetCurrentUser() {
         when(userDetails.getUsername()).thenReturn(NICKNAME);
@@ -100,5 +113,52 @@ class UserServiceImplTest {
         final boolean exists = userService.existsByNickname(NICKNAME);
 
         assertThat(exists).isFalse();
+    }
+
+    @Test
+    void shouldReturnUsersByNicknameWhenGetUsersByNicknameExcludeIds() {
+        when(userRepository.findAllByNicknameStartingWithAndIdNotIn(eq(NICKNAME), eq(EXCLUDED_IDS),
+                                                                    any(Pageable.class))).thenReturn(List.of(user));
+
+        final List<User> users = userService.getUsersByNicknameExcludeIds(NICKNAME, EXCLUDED_IDS, PAGE, SIZE);
+
+        assertThat(users).containsExactly(user);
+    }
+
+    @Test
+    void shouldPassPageableWithPageWhenGetUsersByNicknameExcludeIds() {
+        userService.getUsersByNicknameExcludeIds(NICKNAME, EXCLUDED_IDS, PAGE, SIZE);
+
+        verify(userRepository).findAllByNicknameStartingWithAndIdNotIn(eq(NICKNAME), eq(EXCLUDED_IDS),
+                                                                      paginationCaptor.capture());
+
+        final Pageable pagination = paginationCaptor.getValue();
+
+        assertThat(pagination.getPageNumber()).isEqualTo(PAGE - 1);
+    }
+
+    @Test
+    void shouldPassPageableWithSizeWhenGetUsersByNicknameExcludeIds() {
+        userService.getUsersByNicknameExcludeIds(NICKNAME, EXCLUDED_IDS, PAGE, SIZE);
+
+        verify(userRepository).findAllByNicknameStartingWithAndIdNotIn(eq(NICKNAME), eq(EXCLUDED_IDS),
+                                                                      paginationCaptor.capture());
+
+        final Pageable pagination = paginationCaptor.getValue();
+
+        assertThat(pagination.getPageSize()).isEqualTo(SIZE);
+    }
+
+    @Test
+    void shouldPassPageableWithSortDirectionWhenGetUsersByNicknameExcludeIds() {
+        userService.getUsersByNicknameExcludeIds(NICKNAME, EXCLUDED_IDS, PAGE, SIZE);
+
+        verify(userRepository).findAllByNicknameStartingWithAndIdNotIn(eq(NICKNAME), eq(EXCLUDED_IDS),
+                                                                      paginationCaptor.capture());
+
+        final Pageable pagination = paginationCaptor.getValue();
+
+        assertThat(pagination.getSort().getOrderFor("id")).isNotNull()
+                .returns(ASC, Sort.Order::getDirection);
     }
 }
