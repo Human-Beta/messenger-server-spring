@@ -1,1 +1,3 @@
-./gradlew clean build
+#!/bin/bash
+
+./gradlew clean assemble

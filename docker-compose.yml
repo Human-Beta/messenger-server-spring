@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  messenger-back:
+    build:
+      dockerfile: Dockerfile
+      args:
+        - DB_USER
+        - DB_PASSWORD
+        - PROFILE
+        - ALLOWED_ORIGIN
+    container_name: messenger-back
+    ports:
+      - "8080:8080"
+      - "8888:8888"
+    environment:
+      - DB_HOST=messenger-db
+      - SOCKET_HOST=messenger-back
+
+    depends_on:
+      messenger-db:
+        condition: service_healthy
+  messenger-db:
+    build: database/
+    container_name: messenger-db
+    environment:
+      - DB_USER
+      - DB_PASSWORD
+    healthcheck:
+      test: mysql -u$DB_USER -p$DB_PASSWORD -e "select 1"
+      start_period: 15s
+      interval: 20s
+      timeout: 10s
+      retries: 3

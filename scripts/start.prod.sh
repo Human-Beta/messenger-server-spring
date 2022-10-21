@@ -1,1 +1,3 @@
-java -jar build/libs/server-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+#!/bin/bash
+
+java -jar server-1.0.0.jar --spring.profiles.active=prod

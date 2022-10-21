@@ -11,6 +11,7 @@ INSERT INTO oauth_client_details
         autoapprove
     )
 VALUES
+-- TODO: create client for prod. How to create client_secret? bcrypt?
     (
         "test_id",
         "$2a$10$zM7fxyYGp3C8TOacd5Luku6PR8uSXq7iLu3GY4W3JIMZVsRTtX2N2",
