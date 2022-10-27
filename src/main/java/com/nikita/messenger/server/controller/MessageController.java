@@ -26,9 +26,8 @@ public class MessageController extends AbstractController {
     private MessageFacade messageFacade;
 
     @GetMapping
-    public List<MessageDTO> getMessagesFromChat(@RequestParam final long chatId,
-//                                                   TODO: validate that date is not in the future?
-                                                @RequestParam final Date sinceDate, @RequestParam final int size) {
+    public List<MessageDTO> getMessagesFromChat(@RequestParam final long chatId, @RequestParam final Date sinceDate,
+                                                @RequestParam final int size) {
         final List<MessageData> messages = messageFacade.getMessagesFromChat(chatId, sinceDate, size);
 
         return mapAll(messages, MessageDTO.class);
