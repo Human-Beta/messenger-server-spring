@@ -1,10 +1,12 @@
 package com.nikita.messenger.server.facade.impl;
 
 import com.nikita.messenger.server.data.ChatData;
+import com.nikita.messenger.server.exception.ChatAlreadyExistException;
 import com.nikita.messenger.server.facade.ChatFacade;
 import com.nikita.messenger.server.model.Chat;
 import com.nikita.messenger.server.model.User;
 import com.nikita.messenger.server.service.ChatService;
+import com.nikita.messenger.server.service.SocketIOService;
 import com.nikita.messenger.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,8 @@ public class ChatFacadeImpl extends AbstractFacade implements ChatFacade {
     private ChatService chatService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SocketIOService socketIOService;
 
     @Override
     public List<ChatData> getChatsForCurrentUserExcludeIds(final List<Long> excludedIds, final int size) {
@@ -55,5 +59,25 @@ public class ChatFacadeImpl extends AbstractFacade implements ChatFacade {
     private static boolean hasNameOrChatNameStartsWith(final ChatData chat, final String name) {
         return startsWithIgnoreCase(chat.getName(), name)
                 || startsWithIgnoreCase(chat.getChatName(), name);
+    }
+
+    @Override
+    public ChatData createPrivateChatWith(final String nickname) {
+        final User user1 = getCurrentUser();
+        final User user2 = userService.getUserByNickname(nickname);
+
+        checkIfPrivateChatWithUsersNotExists(user1, user2);
+
+        final Chat chat = chatService.createPrivateChatFor(user1, user2);
+
+        socketIOService.sendChat(chat);
+
+        return convert(chat, ChatData.class);
+    }
+
+    private void checkIfPrivateChatWithUsersNotExists(final User user1, final User user2) {
+        if (chatService.privateChatExistsFor(user1, user2)) {
+            throw new ChatAlreadyExistException(user1, user2);
+        }
     }
 }

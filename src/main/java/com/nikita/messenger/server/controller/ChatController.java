@@ -6,6 +6,7 @@ import com.nikita.messenger.server.dto.PaginationDTO;
 import com.nikita.messenger.server.facade.ChatFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,5 +36,12 @@ public class ChatController extends AbstractController {
                                                                                         pagination.getSize());
 
         return mapAll(chats, ChatDTO.class);
+    }
+
+    @PostMapping("/private")
+    public ChatDTO createPrivateChatWith(@RequestParam final String nickname) {
+        final ChatData chat = chatFacade.createPrivateChatWith(nickname);
+
+        return map(chat, ChatDTO.class);
     }
 }

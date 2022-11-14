@@ -4,7 +4,6 @@ import com.nikita.messenger.server.data.ChatData;
 import com.nikita.messenger.server.dto.ChatDTO;
 import com.nikita.messenger.server.dto.PaginationDTO;
 import com.nikita.messenger.server.facade.ChatFacade;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +26,7 @@ class ChatControllerTest {
     private static final int PAGE = 777;
     private static final int SIZE = 666;
     private static final String NAME = "name";
+    private static final String NICKNAME = "nickname";
 
     @Spy
     @InjectMocks
@@ -40,13 +40,9 @@ class ChatControllerTest {
     private final List<ChatDTO> chats = of(chat);
     private final PaginationDTO pagination = new PaginationDTO(PAGE, SIZE);
 
-    @BeforeEach
-    void setUp() {
-        doReturn(chats).when(controller).mapAll(any(List.class), eq(ChatDTO.class));
-    }
-
     @Test
     void shouldReturnChatsWhenGetChatsForCurrentUser() {
+        setUpMapAll();
         when(chatFacade.getChatsForCurrentUserExcludeIds(EXCLUDED_IDS, SIZE)).thenReturn(of(chatData));
 
         final List<ChatDTO> returnedChats = controller.getChatsForCurrentUser(EXCLUDED_IDS, SIZE);
@@ -56,10 +52,25 @@ class ChatControllerTest {
 
     @Test
     void shouldReturnChatsWhenGetChatsWithNameStartsWith() {
+        setUpMapAll();
         when(chatFacade.getChatsForCurrentUserWithNameStarsWith(NAME, PAGE, SIZE)).thenReturn(of(chatData));
 
         final List<ChatDTO> returnedChats = controller.getChatsWithNameStartsWith(NAME, pagination);
 
         assertThat(returnedChats).isSameAs(chats);
+    }
+
+    @Test
+    void shouldReturnCreatedChatWhenCreatePrivateChatWith() {
+        doReturn(chat).when(controller).map(chatData, ChatDTO.class);
+        when(chatFacade.createPrivateChatWith(NICKNAME)).thenReturn(chatData);
+
+        final ChatDTO createdChat = controller.createPrivateChatWith(NICKNAME);
+
+        assertThat(createdChat).isSameAs(chat);
+    }
+
+    private void setUpMapAll() {
+        doReturn(chats).when(controller).mapAll(any(List.class), eq(ChatDTO.class));
     }
 }

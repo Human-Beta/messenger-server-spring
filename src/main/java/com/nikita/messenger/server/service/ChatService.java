@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ChatService {
 
+    Chat createPrivateChatFor(User user1, User user2);
+
     List<Chat> getChatsForUserExcludeIds(User user, List<Long> excludedIds, int size);
 
     List<Chat> getAllChatsFor(User user);
@@ -26,4 +28,6 @@ public interface ChatService {
     }
 
     boolean isGroup(Chat chat);
+
+    boolean privateChatExistsFor(User user1, User user2);
 }

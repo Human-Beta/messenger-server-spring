@@ -1,6 +1,7 @@
 package com.nikita.messenger.server.service.impl;
 
 
+import com.nikita.messenger.server.exception.UserNotFoundException;
 import com.nikita.messenger.server.model.User;
 import com.nikita.messenger.server.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 
@@ -73,7 +73,7 @@ class UserServiceImplTest {
 
         assertThatThrownBy(() -> userService.getCurrentUser())
                 .hasMessage("There is no user with nickname: " + NICKNAME)
-                .isInstanceOf(UsernameNotFoundException.class);
+                .isInstanceOf(UserNotFoundException.class);
     }
 
     @Test
@@ -89,7 +89,7 @@ class UserServiceImplTest {
     void shouldThrowExceptionWhenGetUserByNicknameAndUsernameDoesNotExist() {
         assertThatThrownBy(() -> userService.getUserByNickname("does_not_exist"))
                 .hasMessage("There is no user with nickname: does_not_exist")
-                .isInstanceOf(UsernameNotFoundException.class);
+                .isInstanceOf(UserNotFoundException.class);
     }
 
     @Test

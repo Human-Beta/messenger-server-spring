@@ -9,4 +9,6 @@ public interface ChatFacade {
     List<ChatData> getChatsForCurrentUserExcludeIds(List<Long> excludedIds, int size);
 
     List<ChatData> getChatsForCurrentUserWithNameStarsWith(String name, int page, int size);
+
+    ChatData createPrivateChatWith(String nickname);
 }

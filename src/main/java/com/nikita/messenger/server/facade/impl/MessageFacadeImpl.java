@@ -61,7 +61,6 @@ public class MessageFacadeImpl extends AbstractFacade implements MessageFacade {
         checkChatAccess(messageRequestData.getChatId());
 
         final Message message = convert(messageRequestData, Message.class);
-
         final Message savedMessage = messageService.saveMessageToChat(message);
 
         socketIOService.sendMessage(savedMessage);

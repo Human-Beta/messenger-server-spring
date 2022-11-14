@@ -13,6 +13,7 @@ import java.util.Objects;
 
 import static com.nikita.messenger.server.enums.ChatType.PRIVATE;
 import static java.lang.String.format;
+import static java.util.List.of;
 import static org.springframework.data.domain.PageRequest.ofSize;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -23,6 +24,19 @@ public class ChatServiceImpl implements ChatService {
 
     @Autowired
     private ChatRepository chatRepository;
+
+    @Override
+    public Chat createPrivateChatFor(final User user1, final User user2) {
+        if (user1.equals(user2)) {
+            throw new IllegalArgumentException("Cannot create a private chat with two same users!");
+        }
+
+        final Chat chat = new Chat();
+        chat.setType(PRIVATE);
+        chat.setUsers(of(user1, user2));
+
+        return chatRepository.save(chat);
+    }
 
     @Override
     public List<Chat> getChatsForUserExcludeIds(final User user, final List<Long> excludedIds, final int size) {
@@ -75,5 +89,10 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public boolean isGroup(final Chat chat) {
         return chat.getType() == ChatType.GROUP;
+    }
+
+    @Override
+    public boolean privateChatExistsFor(final User user1, final User user2) {
+        return chatRepository.privateChatExistsForUsers(user1.getId(), user2.getId());
     }
 }

@@ -5,6 +5,7 @@ import com.nikita.messenger.server.data.MessageData;
 import com.nikita.messenger.server.model.Chat;
 import com.nikita.messenger.server.model.Message;
 import com.nikita.messenger.server.model.User;
+import com.nikita.messenger.server.populator.PrivateChatPopulator;
 import com.nikita.messenger.server.service.ChatService;
 import com.nikita.messenger.server.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,15 +20,13 @@ import org.springframework.core.convert.ConversionService;
 
 import static java.lang.Boolean.TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ChatConverterTest {
 
     private static final long ID = 42;
-    private static final String USER_NAME = "userName";
-    private static final String USER_NICKNAME = "userNickname";
-    private static final String USER_AVATAR_URL = "userAvatarUrl";
 
     @Spy
     @InjectMocks
@@ -41,6 +40,8 @@ class ChatConverterTest {
     private ChatService chatService;
     @Mock
     private ConversionService conversionService;
+    @Mock
+    private PrivateChatPopulator privateChatPopulator;
 
     private final Chat chat = new Chat();
     private final Message message = new Message();
@@ -65,30 +66,12 @@ class ChatConverterTest {
     }
 
     @Test
-    void shouldPopulateNameWhenConvertAndChatIsPrivate() {
+    void shouldPopulatePrivateChat() {
         mockPrivateChat();
 
         final ChatData chatData = converter.convert(chat);
 
-        assertThat(chatData).isNotNull().returns(USER_NAME, ChatData::getName);
-    }
-
-    @Test
-    void shouldPopulateChatNameWhenConvertAndChatIsPrivate() {
-        mockPrivateChat();
-
-        final ChatData chatData = converter.convert(chat);
-
-        assertThat(chatData).isNotNull().returns(USER_NICKNAME, ChatData::getChatName);
-    }
-
-    @Test
-    void shouldPopulateImageUrlWhenConvertAndChatIsPrivate() {
-        mockPrivateChat();
-
-        final ChatData chatData = converter.convert(chat);
-
-        assertThat(chatData).isNotNull().returns(USER_AVATAR_URL, ChatData::getImageUrl);
+        verify(privateChatPopulator).populate(chatData, partner);
     }
 
     @Test
@@ -126,10 +109,6 @@ class ChatConverterTest {
     }
 
     private void mockPrivateChat() {
-        partner.setName(USER_NAME);
-        partner.setNickname(USER_NICKNAME);
-        partner.setAvatarUrl(USER_AVATAR_URL);
-
         when(chatService.isPrivate(chat)).thenReturn(TRUE);
         when(userService.getCurrentUser()).thenReturn(currentUser);
         when(chatService.getPartner(chat, currentUser)).thenReturn(partner);

@@ -1,12 +1,12 @@
 package com.nikita.messenger.server.service.impl;
 
+import com.nikita.messenger.server.exception.UserNotFoundException;
 import com.nikita.messenger.server.model.User;
 import com.nikita.messenger.server.repository.UserRepository;
 import com.nikita.messenger.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByNickname(final String nickname) {
         return userRepository.findByNickname(nickname)
-                .orElseThrow(() -> new UsernameNotFoundException("There is no user with nickname: " + nickname));
+                .orElseThrow(() -> new UserNotFoundException("There is no user with nickname: " + nickname));
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.nikita.messenger.server.data.ChatData;
 import com.nikita.messenger.server.data.MessageData;
 import com.nikita.messenger.server.model.Chat;
 import com.nikita.messenger.server.model.User;
+import com.nikita.messenger.server.populator.PrivateChatPopulator;
 import com.nikita.messenger.server.service.ChatService;
 import com.nikita.messenger.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ public class ChatConverter extends AbstractConverter<Chat, ChatData> {
     private UserService userService;
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private PrivateChatPopulator privateChatPopulator;
 
     @Override
     public ChatData convert(final Chat chat) {
@@ -24,9 +27,7 @@ public class ChatConverter extends AbstractConverter<Chat, ChatData> {
         if (isPrivate(chat)) {
             final User chatPartnerUser = getPartnerForCurrentUser(chat);
 
-            setName(chatPartnerUser, chatData);
-            setChatName(chatPartnerUser, chatData);
-            setImageUrl(chatPartnerUser, chatData);
+            privateChatPopulator.populate(chatData, chatPartnerUser);
         } else if (isGroup(chat)) {
 //            TODO:
 //             chatData.setName(chat.getName());
@@ -48,18 +49,6 @@ public class ChatConverter extends AbstractConverter<Chat, ChatData> {
 
     private User getPartnerForCurrentUser(final Chat chat) {
         return chatService.getPartner(chat, userService.getCurrentUser());
-    }
-
-    private void setName(final User user, final ChatData chatData) {
-        chatData.setName(user.getName());
-    }
-
-    private void setChatName(final User user, final ChatData chatData) {
-        chatData.setChatName(user.getNickname());
-    }
-
-    private void setImageUrl(final User user, final ChatData chatData) {
-        chatData.setImageUrl(user.getAvatarUrl());
     }
 
     private void setLastMessage(final Chat chat, final ChatData chatData) {
