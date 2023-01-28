@@ -1,0 +1,41 @@
+- git hub actions
+    + build
+    + test
+    + push image to docker hub
+        - manually
+    - deploy (manually)
++ copy 'serverless.yml' and scripts from test-serverless project
++ store HOST env variable which is used in the serverless.yml in the SSM?
++ use docker repo to create a build (?) and use it on the EC2
+    + docker login -u "cybergkiller" -p "YouWillN0tH@ckThis" docker.io
+    + docker build -t cybergkiller/messenger .
+    + docker push cybergkiller/messenger
+    ...
+    + docker login -u "cybergkiller" -p "YouWillN0tH@ckThis" docker.io
+    + docker pull cybergkiller/messenger
+    + docker run --name messenger cybergkiller/messenger
+- create VPC to close DB from outer world. Make it available for the messenger server only
+    - https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Tutorials.WebServerDB.CreateVPC.html
+    - todo:
+        + create VPC with:
+            - 2 public subnets for the server in us-east-1a and us-east-1b
+            - 2 private subnets for the DB in us-east-1a and us-east-1b
+            - NO NAT!
+            - VPC enpdoints none
+            - Internet gateway
+        + create VPC security group for a public web server
+            - with CREATED VPC
+            - inbound - All traffic
+            - (!!!) outbound - All traffic
+        + create VPC security group for a private DB instance
+            - with CREATED VPC
+            - inbound
+                Type: MySQL/Aurora
+                Source: *The identifier of the security group for web server*
+            - outbound - All traffic
+        + create DB subnet group IN RDS console
+            - with CREATED VPC
+            - choose two CREATED private subnets
+
++ configure db in the AWS via serverless.yaml
++ Pass $PROFILE, $DB_HOST, $DB_USERNAME, $DB_PASSWORD to the application-prod.properties

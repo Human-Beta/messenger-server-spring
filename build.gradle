@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.nikita.messenger'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = '11'
 
 repositories {
@@ -35,7 +35,7 @@ test {
 	}
 }
 
-task integration_tests(type: Test) {
+tasks.register('integration_tests', Test) {
 	dependsOn 'testClasses'
 	useJUnitPlatform()
 

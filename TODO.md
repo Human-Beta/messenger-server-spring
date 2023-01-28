@@ -12,6 +12,7 @@
 - [x] Save auth clients in DB
 - [x] Save auth tokens in DB
 - [x] Save encoded password in the DB
+- [ ] Migrate to HTTPS?
 - [ ] Send encoded password from the UI (BCryptPasswordEncoder)
 - [ ] Replace 4 spaces with tab symbol in the WHOLE project
 - [ ] Unit tests
