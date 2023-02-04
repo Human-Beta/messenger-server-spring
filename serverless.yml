@@ -175,6 +175,10 @@ resources:
             ToPort: 80
             CidrIp: 0.0.0.0/0
 #            TODO: 8888 or what should be here for web socket?
+#          - IpProtocol: tcp
+#            FromPort: 8888
+#            ToPort: 8888
+#            CidrIp: 0.0.0.0/0
 
     DBSecurityGroup:
       Type: AWS::EC2::SecurityGroup

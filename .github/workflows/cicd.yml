@@ -31,9 +31,13 @@ jobs:
       with:
         arguments: assemble
     - name: Cache jar file
-      uses: actions/cache@v3
+      uses: actions/cache/save@v3
       with:
-        key: ${{ runner.os }}-jar
+#        TODO: use another key. Example: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}.
+#         Reason: this cache is used from git hub repo cache. And if it was created once it will be used EVERY time.
+#         I need to create key depends on hash of the server-0.0.1.jar file? Or build.gradle?
+#         I need something that changes after libs version changing
+        key: ${{ runner.os }}-jar-${{ github.run_id }}
         path: ./build/libs/
 
   test:
@@ -43,9 +47,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Use cache
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
-          key: ${{ runner.os }}-jar
+#          key: ${{ runner.os }}-jar
+          key: ${{ runner.os }}-jar-${{ github.run_id }}
           path: ./build/libs/
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
@@ -70,9 +75,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Use cache
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
-          key: ${{ runner.os }}-jar
+#          key: ${{ runner.os }}-jar
+          key: ${{ runner.os }}-jar-${{ github.run_id }}
           path: ./build/libs/
       - name: Create docker image
         run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/messenger .
@@ -99,6 +105,7 @@ jobs:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
         with:
             args: deploy --stage prod --verbose
+#      TODO: reboot, or better stop and start (there is diff between that), instance before setup
       - name: Configure instance
         uses: appleboy/ssh-action@v0.1.7
         with:
