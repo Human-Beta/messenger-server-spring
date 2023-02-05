@@ -58,6 +58,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: jacocoTestReport
+#      TODO: add artifact upload for the report
 
   push-image:
 #    TODO: I need if condition to run this steps on the 'main' branch only.

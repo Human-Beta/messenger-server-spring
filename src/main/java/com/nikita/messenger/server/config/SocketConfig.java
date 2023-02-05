@@ -17,7 +17,8 @@ public class SocketConfig {
     @Bean
     public SocketIOServer socketIOServer(final AuthorizationListener authorizationListener) {
         final com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
-        config.setHostname(host);
+//        TODO: remove?
+//        config.setHostname(host);
         config.setPort(port);
         config.setAuthorizationListener(authorizationListener);
 
