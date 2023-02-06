@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INTEGER NOT NULL AUTO_INCREMENT,
     nickname VARCHAR(32) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -8,14 +8,14 @@ CREATE TABLE users (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE chat_types (
+CREATE TABLE IF NOT EXISTS chat_types (
     id INTEGER NOT NULL,
     name VARCHAR(10) NOT NULL UNIQUE,
 
     PRIMARY KEY (id)
 );
 
-CREATE TABLE chats (
+CREATE TABLE IF NOT EXISTS chats (
     id INTEGER NOT NULL AUTO_INCREMENT,
     type_id INTEGER NOT NULL,
 
@@ -24,7 +24,7 @@ CREATE TABLE chats (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE chats_users (
+CREATE TABLE IF NOT EXISTS chats_users (
     chat_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
 
@@ -33,7 +33,7 @@ CREATE TABLE chats_users (
     PRIMARY KEY (chat_id, user_id)
 );
 
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
     id INTEGER NOT NULL AUTO_INCREMENT,
     chat_id INTEGER NOT NULL,
     sender_id INTEGER NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE messages (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE oauth_client_details (
+CREATE TABLE IF NOT EXISTS oauth_client_details (
     client_id VARCHAR(256) PRIMARY KEY,
     resource_ids VARCHAR(256),
     client_secret VARCHAR(256),
@@ -59,7 +59,7 @@ CREATE TABLE oauth_client_details (
     autoapprove VARCHAR(256)
 );
 
-CREATE TABLE oauth_access_token (
+CREATE TABLE IF NOT EXISTS oauth_access_token (
     authentication_id varchar(255) NOT NULL PRIMARY KEY,
     token_id varchar(255) NOT NULL,
     token blob NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE oauth_access_token (
     refresh_token varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE oauth_refresh_token (
+CREATE TABLE IF NOT EXISTS oauth_refresh_token (
     token_id varchar(255) NOT NULL,
     token blob NOT NULL,
     authentication blob NOT NULL

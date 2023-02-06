@@ -24,8 +24,8 @@ resources:
         Tags:
           - Key: 'Name'
             Value: ${self:service}
-        ImageId: 'ami-0149b2da6ceec4bb0'
-        InstanceType: 't2.micro'
+        ImageId: 'ami-00874d747dde814fa'
+        InstanceType: 't3.micro'
         KeyName: 'messenger'
         SubnetId: !Ref ServerPublicSubnet1
         SecurityGroupIds:

@@ -9,16 +9,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SocketConfig {
 
-    @Value("${socket.server.host}")
-    private String host;
     @Value("${socket.server.port}")
     private int port;
 
     @Bean
     public SocketIOServer socketIOServer(final AuthorizationListener authorizationListener) {
         final com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
-//        TODO: remove?
-//        config.setHostname(host);
         config.setPort(port);
         config.setAuthorizationListener(authorizationListener);
 

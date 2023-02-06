@@ -116,6 +116,7 @@ jobs:
           script: |
             sudo apt update && sudo apt upgrade -y
             echo 'Y' | sudo apt install docker.io
+            echo 'Y' | sudo apt install mysql-server
       - name: Get RDS host
         uses: serverless/github-action@v3.1
         env:
@@ -135,8 +136,8 @@ jobs:
           envs: DB_HOST,DB_USERNAME,DB_PASSWORD
           script: |
             echo DB_HOST=$DB_HOST > .env
-            echo DB_USERNAME=$DB_USERNAME>> .env
-            echo DB_PASSWORD=$DB_PASSWORD>> .env
+            echo DB_USERNAME=$DB_USERNAME >> .env
+            echo DB_PASSWORD=$DB_PASSWORD >> .env
             echo PROFILE=prod >> .env
       - name: Run server
         uses: appleboy/ssh-action@v0.1.7
@@ -153,3 +154,24 @@ jobs:
             sudo docker pull $DOCKER_HUB_USERNAME/messenger
             sudo docker stop messenger || true && sudo docker rm messenger
             sudo docker run --name messenger -d -p 80:8080 -p 8888:8888 --env-file .env $DOCKER_HUB_USERNAME/messenger
+      - name: Register client in the DB if not present
+        uses: appleboy/ssh-action@v0.1.7
+        env:
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+          OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          envs: DB_HOST,DB_USERNAME,DB_PASSWORD,OAUTH_CLIENT_ID,OAUTH_CLIENT_SECRET
+          script: |
+            mysql -h $DB_HOST -u$DB_USERNAME -p$DB_PASSWORD << EOF
+                INSERT IGNORE INTO messengerdb.oauth_client_details
+                  (
+                    client_id, client_secret, scope, authorized_grant_types,
+                    access_token_validity, refresh_token_validity, autoapprove
+                  )
+                VALUES ("${OAUTH_CLIENT_ID}", "${OAUTH_CLIENT_SECRET}", "basic", "password,refresh_token", 3600, 86400, true);
+            EOF
