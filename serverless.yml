@@ -1,0 +1,216 @@
+org: brainless
+app: messenger
+service: messenger-server
+frameworkVersion: '3'
+
+custom:
+  myStage: ${self:provider.stage}
+  elastic-ip:
+    prod: ${ssm:/messenger/server/host}
+provider:
+  name: aws
+  stage: ${opt:stage, 'local'}
+  region: us-east-1
+
+resources:
+  Outputs:
+    DBInstanceHost:
+      Description: The HOST of the DB
+      Value: !GetAtt DBInstance.Endpoint.Address
+  Resources:
+    ServerInstance:
+      Type: AWS::EC2::Instance
+      Properties:
+        Tags:
+          - Key: 'Name'
+            Value: ${self:service}
+        ImageId: 'ami-00874d747dde814fa'
+        InstanceType: 't3.micro'
+        KeyName: 'messenger'
+        SubnetId: !Ref ServerPublicSubnet1
+        SecurityGroupIds:
+          - !Ref ServerSecurityGroup
+
+    AssociateEC2Instance:
+      Type: AWS::EC2::EIPAssociation
+      Properties:
+        EIP: ${self:custom.elastic-ip.${self:custom.myStage}}
+        InstanceId: !Ref ServerInstance
+
+    ServerVPC:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: 11.0.0.0/16
+        EnableDnsHostnames: true
+        EnableDnsSupport: true
+        Tags:
+          - Key: Name
+            Value: ${self:service}-vpc
+
+    ServerGateway:
+      Type: AWS::EC2::InternetGateway
+      Properties:
+        Tags:
+          - Key: Name
+            Value: ${self:service}-igw
+
+    InternetGatewayAttachment:
+      Type: AWS::EC2::VPCGatewayAttachment
+      Properties:
+        InternetGatewayId: !Ref ServerGateway
+        VpcId: !Ref ServerVPC
+
+    ServerPublicSubnet1:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref ServerVPC
+        CidrBlock: 11.0.0.0/20
+        AvailabilityZone: !Select [ 0, !GetAZs '' ]
+        MapPublicIpOnLaunch: true
+        Tags:
+          - Key: Name
+            Value: ${self:service}-subnet-public1-az1
+
+    ServerPublicSubnet2:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref ServerVPC
+        CidrBlock: 11.0.16.0/20
+        AvailabilityZone: !Select [ 1, !GetAZs '' ]
+        MapPublicIpOnLaunch: true
+        Tags:
+          - Key: Name
+            Value: ${self:service}-subnet-public2-az2
+
+    DBPrivateSubnet1:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref ServerVPC
+        CidrBlock: 11.0.128.0/20
+        AvailabilityZone: !Select [ 0, !GetAZs '' ]
+        MapPublicIpOnLaunch: false
+        Tags:
+          - Key: Name
+            Value: ${self:service}-db-subnet-private1-az1
+
+    DBPrivateSubnet2:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref ServerVPC
+        CidrBlock: 11.0.144.0/20
+        AvailabilityZone: !Select [ 1, !GetAZs '' ]
+        Tags:
+          - Key: Name
+            Value: ${self:service}-db-subnet-private2-az2
+
+    PublicRouteTable:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref ServerVPC
+        Tags:
+          - Key: Name
+            Value: ${self:service}-rtb-public
+
+    DefaultPublicRoute:
+      Type: AWS::EC2::Route
+      DependsOn: InternetGatewayAttachment
+      Properties:
+        RouteTableId: !Ref PublicRouteTable
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId: !Ref ServerGateway
+
+    ServerPublicSubnet1RouteTableAssociation:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref PublicRouteTable
+        SubnetId: !Ref ServerPublicSubnet1
+
+    ServerPublicSubnet2RouteTableAssociation:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref PublicRouteTable
+        SubnetId: !Ref ServerPublicSubnet2
+
+    DBPrivateRouteTable1:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref ServerVPC
+        Tags:
+          - Key: Name
+            Value: ${self:service}-db-rtb-private1
+
+    DBPrivateSubnet1RouteTableAssociation:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref DBPrivateRouteTable1
+        SubnetId: !Ref DBPrivateSubnet1
+
+    DBPrivateRouteTable2:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref ServerVPC
+        Tags:
+          - Key: Name
+            Value: ${self:service}-db-rtb-private2
+
+    DBPrivateSubnet2RouteTableAssociation:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref DBPrivateRouteTable2
+        SubnetId: !Ref DBPrivateSubnet2
+
+    ServerSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupName: ${self:service}-group
+        GroupDescription: Allows SSH access to developers and http access to users
+        VpcId: !Ref ServerVPC
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 22
+            ToPort: 22
+            CidrIp: 0.0.0.0/0
+          - IpProtocol: tcp
+            FromPort: 80
+            ToPort: 80
+            CidrIp: 0.0.0.0/0
+          - IpProtocol: tcp
+            FromPort: 8888
+            ToPort: 8888
+            CidrIp: 0.0.0.0/0
+
+    DBSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupName: ${self:service}-db-group
+        GroupDescription: Allows access from the server only
+        VpcId: !Ref ServerVPC
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 3306
+            ToPort: 3306
+            SourceSecurityGroupId: !Ref ServerSecurityGroup
+
+    DBSubnetGroup:
+      Type: AWS::RDS::DBSubnetGroup
+      Properties:
+        DBSubnetGroupDescription: DB subnet group
+        DBSubnetGroupName: db-subnet-group
+        SubnetIds:
+          - !Ref DBPrivateSubnet1
+          - !Ref DBPrivateSubnet2
+
+    DBInstance:
+      Type: AWS::RDS::DBInstance
+      Properties:
+        DBInstanceIdentifier: messenger-db
+        DBName: messengerdb
+        DBInstanceClass: db.t3.micro
+        AllocatedStorage: 20
+        Engine: MySQL
+        EngineVersion: "8.0.28"
+        MasterUsername: ${ssm:/messenger/db/username}
+        MasterUserPassword: ${ssm:/messenger/db/password}
+        DBSubnetGroupName: !Ref DBSubnetGroup
+        VPCSecurityGroups:
+          - !Ref DBSecurityGroup

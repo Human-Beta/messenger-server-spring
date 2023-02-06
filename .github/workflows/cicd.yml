@@ -1,0 +1,177 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI/CD
+
+on: pull_request
+# TODO: or push to main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    - name: Run chmod to make gradlew executable
+      run: chmod +x ./gradlew
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: assemble
+    - name: Cache jar file
+      uses: actions/cache/save@v3
+      with:
+#        TODO: use another key. Example: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}.
+#         Reason: this cache is used from git hub repo cache. And if it was created once it will be used EVERY time.
+#         I need to create key depends on hash of the server-0.0.1.jar file? Or build.gradle?
+#         I need something that changes after libs version changing
+        key: ${{ runner.os }}-jar-${{ github.run_id }}
+        path: ./build/libs/
+
+  test:
+    runs-on: ubuntu-22.04
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use cache
+        uses: actions/cache/restore@v3
+        with:
+#          key: ${{ runner.os }}-jar
+          key: ${{ runner.os }}-jar-${{ github.run_id }}
+          path: ./build/libs/
+      - name: Run chmod to make gradlew executable
+        run: chmod +x ./gradlew
+      - name: Run unit tests with a coverage report
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: jacocoTestReport
+#      TODO: add artifact upload for the report
+
+  push-image:
+#    TODO: I need if condition to run this steps on the 'main' branch only.
+#       The thing is that this workflow runs on pull request. Is this gonna work when I merge a pull request?
+#       Or should I create another .yml file for deploy?
+#    if: github.head_ref == 'main'
+#    TODO: can I run it manually
+#      Maybe run by MR approve? (trigger for MR approval)
+#      workflow_dispatch?
+    runs-on: ubuntu-22.04
+    needs: test
+
+    name: Push image to Docker Hub
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use cache
+        uses: actions/cache/restore@v3
+        with:
+#          key: ${{ runner.os }}-jar
+          key: ${{ runner.os }}-jar-${{ github.run_id }}
+          path: ./build/libs/
+      - name: Create docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/messenger .
+      - name: Log in to docker hub
+        run: docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
+      - name: Push image to docker hub
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/messenger
+
+  deploy:
+    runs-on: ubuntu-22.04
+    needs: push-image
+
+    name: Deploy server
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.10.0
+      - name: Deploy
+        uses: serverless/github-action@v3.1
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+        with:
+            args: deploy --stage prod --verbose
+#      TODO: reboot, or better stop and start (there is diff between that), instance before setup
+      - name: Configure instance
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo apt update && sudo apt upgrade -y
+            echo 'Y' | sudo apt install docker.io
+            echo 'Y' | sudo apt install mysql-server
+      - name: Get RDS host
+        uses: serverless/github-action@v3.1
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+        with:
+          args: -c "echo DB_HOST=$(sls info --stage prod --verbose | grep -oP 'DBInstanceHost:\s\K(.*)') >> $GITHUB_ENV"
+          entrypoint: /bin/sh
+      - name: Setup env variables
+        uses: appleboy/ssh-action@v0.1.7
+        env:
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          envs: DB_HOST,DB_USERNAME,DB_PASSWORD
+          script: |
+            echo DB_HOST=$DB_HOST > .env
+            echo DB_USERNAME=$DB_USERNAME >> .env
+            echo DB_PASSWORD=$DB_PASSWORD >> .env
+            echo PROFILE=prod >> .env
+      - name: Run server
+        uses: appleboy/ssh-action@v0.1.7
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          envs: DOCKER_HUB_USERNAME,DOCKER_HUB_PASSWORD
+          script: |
+            sudo docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD docker.io
+            sudo docker pull $DOCKER_HUB_USERNAME/messenger
+            sudo docker stop messenger || true && sudo docker rm messenger
+            sudo docker run --name messenger -d -p 80:8080 -p 8888:8888 --env-file .env $DOCKER_HUB_USERNAME/messenger
+      - name: Register client in the DB if not present
+        uses: appleboy/ssh-action@v0.1.7
+        env:
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+          OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          envs: DB_HOST,DB_USERNAME,DB_PASSWORD,OAUTH_CLIENT_ID,OAUTH_CLIENT_SECRET
+          script: |
+            mysql -h $DB_HOST -u$DB_USERNAME -p$DB_PASSWORD << EOF
+                INSERT IGNORE INTO messengerdb.oauth_client_details
+                  (
+                    client_id, client_secret, scope, authorized_grant_types,
+                    access_token_validity, refresh_token_validity, autoapprove
+                  )
+                VALUES ("${OAUTH_CLIENT_ID}", "${OAUTH_CLIENT_SECRET}", "basic", "password,refresh_token", 3600, 86400, true);
+            EOF

@@ -1,3 +1,7 @@
 build
 .idea
 .gradle
+
+.serverless
+*.pem
+*.env

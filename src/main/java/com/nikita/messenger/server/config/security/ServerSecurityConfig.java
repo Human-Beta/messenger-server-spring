@@ -29,7 +29,7 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
     public FilterRegistrationBean<CorsFilter> customCorsFilter() {
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin(allowedOrigin);
+        config.addAllowedOriginPattern(allowedOrigin);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
